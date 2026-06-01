@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /cart.html?*
+Disallow: /profile.html?*
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://delightpk.shop/sitemap.xml

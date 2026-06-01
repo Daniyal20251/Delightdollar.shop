@@ -1,0 +1,231 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Category</title>  
+  <link rel="stylesheet" href="Home.css">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f8f8f8;
+    }
+
+    /* Modern Gradient Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(135deg, #ff6a00, #ff3d00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 65px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      border-bottom-left-radius: 35px;
+      border-bottom-right-radius: 35px;
+      z-index: 20;
+    }
+
+    /* Back Button */
+    .back-btn {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .back-btn img {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Category Title */
+    header h4 {
+      color: #fff;
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      margin: 0;
+      text-align: center;
+      line-height: 65px;
+    }
+
+    /* Container */
+    .container {
+      margin-top: 80px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Loading */
+    #loading {
+      text-align: center;
+      color: #666;
+      margin-top: 100px;
+      font-weight: 500;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>  
+<body>  
+
+  <!-- Top Header -->  
+  <header>  
+    <div class="back-btn" onclick="history.back()">  
+      <img src="Delight icons/Back.png" alt="Back">  
+    </div>  
+    <h4 id="categoryTitle">Category</h4>  
+  </header>  
+
+  <!-- Product Container -->  
+  <div class="container" id="itemContainer">  
+    <div id="loading">Loading products...</div>  
+  </div>  
+
+  <script>
+    // GET URL PARAMETERS
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get("category");
+    const sellerPhone = urlParams.get("phone");
+
+    // Set title - show subcategory name
+    const displayTitle = category && category.includes(" - ") 
+      ? category.split(" - ").pop().trim() 
+      : (category || "Category");
+    document.getElementById("categoryTitle").textContent = displayTitle;
+
+    // LOAD PRODUCTS - STORE SPECIFIC
+    async function loadCategoryProducts() {
+      const container = document.getElementById("itemContainer");
+      const loading = document.getElementById("loading");
+
+      if (!category || !sellerPhone) {
+        loading.textContent = "Missing category or store info!";
+        loading.style.color = "#ff6b00";
+        loading.style.fontWeight = "700";
+        return;
+      }
+
+      try {
+        const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/products");
+        const allProducts = await res.json();
+
+        console.log("Total products:", allProducts.length);
+        console.log("Looking for category:", category);
+        console.log("Store phone:", sellerPhone);
+
+        // FILTER: Category (includes match) + Store Phone
+        const filtered = allProducts.filter(p => {
+          const productCategory = (p.category || "").toLowerCase();
+          const searchCategory = category.toLowerCase().trim();
+          const matchCategory = productCategory.includes(searchCategory);
+          const matchStore = p.sellerPhone === sellerPhone;
+
+          if (matchCategory && matchStore) {
+            console.log("Matched:", p.title, "| Category:", p.category);
+          }
+
+          return matchCategory && matchStore;
+        });
+
+        console.log("Filtered products:", filtered.length);
+
+        loading.style.display = "none";
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div class="not-found" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
+              <img src="Delight icons/not-found.png" alt="No Results" style="width:180px; opacity:0.8; margin-bottom: 14px;">
+              <h3 style="font-size: 18px; font-weight: 800; color: #ff6b00; margin-bottom: 6px;">Oops! No Items Found</h3>
+              <p style="color: #555577; font-size: 14px;">No products in this category for this store.</p>
+            </div>`;
+          return;
+        }
+
+        // Render products with Home.css card structure
+        filtered.forEach((item, index) => {
+          const card = document.createElement("div");
+          card.className = "item-card";
+          card.style.animationDelay = `${(index % 10) * 40}ms`;
+
+          const basePrice = parseInt(item.price?.toString().replace(/[^\d]/g, "")) || 0;
+          const discount = parseInt(item.discount?.toString().replace(/[^\d]/g, "")) || 0;
+          const finalPrice = Math.max(basePrice - discount, 0);
+          const img = item.images?.[0] || item.image || 'https://via.placeholder.com/150';
+
+          card.innerHTML = `
+            <div class="card-img-wrap">
+              <img src="${img}" alt="${item.title || ''}" loading="lazy">
+            </div>
+            <div class="card-body">
+              <h3>${item.title || ''}</h3>
+              <p class="price-wrapper">
+                <span class="new-price"><span class="rs">Rs.</span><strong>${finalPrice}</strong></span>
+                ${discount > 0 ? `<span class="old-price-inline">Rs. ${basePrice}</span>` : ''}
+              </p>
+            </div>
+          `;
+
+          card.addEventListener("click", () => {
+            const updatedItem = { ...item, finalPrice, originalPrice: basePrice };
+            localStorage.setItem("selectedItem", JSON.stringify(updatedItem));
+            window.location.href = "Stores itemDetails.html";
+          });
+
+          container.appendChild(card);
+        });
+
+        // Setup scroll reveal
+        setupScrollReveal();
+
+      } catch (err) {
+        console.error("Error:", err);
+        loading.textContent = "Error loading products! Check internet.";
+        loading.style.color = "#ff6b00";
+      }
+    }
+
+    // Scroll reveal animation
+    function setupScrollReveal() {
+      const cards = document.querySelectorAll('.item-card');
+      if (!('IntersectionObserver' in window)) {
+        cards.forEach(c => c.classList.add('visible'));
+        return;
+      }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+      cards.forEach(c => observer.observe(c));
+    }
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", loadCategoryProducts);
+  </script>  
+</body>  
+</html>

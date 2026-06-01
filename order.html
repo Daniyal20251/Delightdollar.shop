@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>www.delight.pk - Place Order</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 480px;
+  margin: auto;
+  padding: 20px;
+  background-color: #fdfdfd;
+  color: #333;
+}
+h2 { text-align: center; margin-bottom: 20px; color: #ef6c00; }
+input, textarea, button, select {
+  width: 100%; padding: 12px; margin-top: 12px;
+  border-radius: 8px; border: 1px solid #ccc; font-size: 15px;
+  box-sizing: border-box;
+}
+button {
+  background-color: #ef6c00; color: #fff; font-size: 17px;
+  font-weight: bold; cursor: pointer; border: none; transition: 0.3s;
+}
+button:hover { background-color: #d65c00; }
+
+.product-info { padding:12px; background:#fff3e0; border:1px solid #ef6c00; border-radius:10px; margin-bottom:20px; }
+.product-card { padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ef6c00; background:#fff8e1; }
+.product-title { font-weight:bold; margin-bottom:4px;}
+.price { color:#d65c00; font-weight:bold; margin-bottom:8px;}
+.label { font-weight:500; font-size:14px; margin-top:4px;}
+.description { margin-top:6px; font-size:14px; color:#555; }
+</style>
+</head>
+
+<body>
+
+<h2>🛒 Place Your Order</h2>
+
+<div id="productInfoContainer" class="product-info"></div>
+
+<form id="orderForm" onsubmit="handleSubmit(event)">
+  <input type="text" name="Name" placeholder="Your Name" required>
+
+  <!-- ❗ Address phone only for delivery — NOT for account -->
+  <input type="text" name="Phone" minlength="11" maxlength="11" placeholder="Phone Number" required>
+
+  <select name="province" required>
+    <option value="">Province/Region</option>
+    <option value="Sindh">Sindh</option>
+    <option value="Punjab">Punjab</option>
+    <option value="Balochistan">Balochistan</option>
+    <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+    <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+    <option value="Azad Kashmir">Azad Kashmir</option>
+  </select>
+
+  <input type="text" name="City" placeholder="City" required>
+  <input type="text" name="Zone" placeholder="Zone / Area" required>
+
+  <textarea name="Full_Address" placeholder="Full Address" rows="3" required></textarea>
+
+  <button type="submit">✅ Confirm Order</button>
+</form>
+
+<script>
+// ---------------- LOGIN CHECK ----------------
+const customer = JSON.parse(localStorage.getItem("customer"));
+if(!customer){
+    alert("Please Login or Signup first!");
+    window.location.href = "login.html";
+}
+
+// ---------------- PRODUCT DATA ----------------
+const container = document.getElementById("productInfoContainer");
+const orderProduct = JSON.parse(localStorage.getItem("orderProduct"));
+
+if(!orderProduct){
+    container.innerHTML = "<h3 style='color:red;text-align:center;'>❌ No product selected.</h3>";
+} 
+else {
+    const price = Number(orderProduct.finalPrice || orderProduct.price || 0);
+    const delivery = Number(orderProduct.delivery || 0);
+    const totalPrice = price + delivery;
+
+    container.innerHTML = `
+    <div class="product-card">
+      <div class="product-title">${orderProduct.title}</div>
+      <div class="price">Rs. ${price}</div>
+
+      <div style="display:flex;align-items:center;">
+        <img src="${orderProduct.image}" 
+             style="width:90px;height:90px;border-radius:8px;object-fit:cover;margin-right:10px;">
+
+        <div>
+          <div class="label">Color: ${orderProduct.selectedColor || "N/A"}</div>
+          <div class="label">Size: ${orderProduct.selectedSize || "N/A"}</div>
+          <div class="label">Delivery Charges: Rs. ${delivery}</div>
+          <div class="label"><strong>Total:</strong> Rs. ${totalPrice}</div>
+        </div>
+      </div>
+    </div>
+    `;
+}
+
+// ---------------- HANDLE ORDER SUBMIT ----------------
+async function handleSubmit(e){
+    e.preventDefault();
+
+    const form = document.getElementById("orderForm");
+    const button = form.querySelector("button");
+
+    button.disabled = true;
+    button.innerText = "⏳ Sending...";
+
+    const formData = new FormData(form);
+    const userData = Object.fromEntries(formData.entries());
+
+    const price = Number(orderProduct.finalPrice || orderProduct.price || 0);
+    const delivery = Number(orderProduct.delivery || 0);
+
+    const orderData = {
+        Productid: customer.phone,
+        buyerName: userData.Name,
+        buyerPhone: customer.phone,
+        addressPhone: userData.Phone,
+        address: `${userData.province}, ${userData.City}, ${userData.Zone}, ${userData.Full_Address}`,
+        product: {
+            title: orderProduct.title,
+            price: price,
+            color: orderProduct.selectedColor || "N/A",
+            size: orderProduct.selectedSize || "N/A",
+            image: orderProduct.image,
+            delivery: delivery,
+            description: orderProduct.description || "",
+        },
+        sellerPhone: orderProduct.sellerPhone
+    };
+
+    console.log("FINAL ORDER DATA:", orderData);
+
+    try{
+        const response = await fetch("https://delight-backend--araindaniyalo2.replit.app/place-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderData)
+        });
+
+        const resData = await response.json();
+        if(response.ok){
+            // ✅ Order success → form clear + redirect
+            form.reset();
+            window.location.href = "thanks.html";
+        } else {
+            alert("❌ Failed: " + resData.message);
+        }
+    }
+    catch(err){
+        alert("❌ Error: " + err.message);
+    }
+
+    button.disabled = false;
+    button.innerText = "✅ Confirm Order";
+}
+</script>
+
+</body>
+</html>

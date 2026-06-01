@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delightpk - Shops</title>
+  <meta name="description" content="Browse all shops on Delightpk Pakistan's online marketplace.">
+  <meta name="theme-color" content="#ff6b00">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Home.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ── Stores Grid ── */
+    #storesContainer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .store-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px 10px 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      text-align: center;
+      border: 1.5px solid #f0f0f5;
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s;
+      text-decoration: none;
+      display: block;
+
+      /* scroll-reveal */
+      opacity: 0;
+      transform: translateY(28px);
+    }
+
+    .store-card.visible {
+      animation: cardReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes cardReveal {
+      from { opacity:0; transform:translateY(28px) scale(0.97); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    .store-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 28px rgba(255,107,0,0.18);
+      border-color: rgba(255,107,0,0.3);
+    }
+
+    .store-card .store-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid #ff6b00;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(255,107,0,0.2);
+      background: #f5f5f5;
+    }
+
+    .store-card h3 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .store-card .store-badge {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #ff6b00;
+      background: #fff3e8;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Not Found ── */
+    .not-found-stores {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .not-found-stores img { width: 140px; opacity: 0.85; margin-bottom: 12px; }
+    .not-found-stores h3 { font-size: 17px; font-weight: 800; color: #ff6b00; margin-bottom: 6px; }
+    .not-found-stores p { color: #777; font-size: 13px; }
+
+    /* ── Skeleton ── */
+    #storesSkeleton {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+    .skeleton-store-card {
+      background: white;
+      border-radius: 16px;
+      height: 160px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      border: 1.5px solid #f0f0f5;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .skeleton-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+    }
+    .skeleton-store-name {
+      width: 70%; height: 13px;
+      border-radius: 6px;
+    }
+    .skeleton-store-tag {
+      width: 45%; height: 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="main-header">
+    <div class="header-left">
+      <div class="logo-wrap">
+        <img src="Delight icons/Delightpk.png" width="36" height="36" alt="logo">
+      </div>
+      <h1 class="brand-name">Delight<span>pk</span></h1>
+    </div>
+    <div class="header-right">
+      <div class="search-wrap">
+        <div class="search-input-box">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="storeSearch" class="search-input" placeholder="Search stores...">
+          <button class="search-clear-btn" id="searchClearBtn" style="display:none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div style="height: 64px;"></div>
+
+  <!-- ===== TAB BAR ===== -->
+  <div class="tab-bar">
+    <div class="tab" onclick="setActiveTab(this, 'index.html')">All Items</div>
+    <div class="tab active" onclick="setActiveTab(this, 'Delightstore.html')">Shops</div>
+    <div class="underline"></div>
+  </div>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bar">
+    <a href="#" id="homeLink" class="active">
+      <img src="Delight icons/Home.png" width="22" height="22" alt="Home">
+      <span>Home</span>
+    </a>
+    <a href="#" id="categoriesLink">
+      <img src="Delight icons/Categories.png" width="22" height="22" alt="Categories">
+      <span>Categories</span>
+    </a>
+    <a href="#" id="cartLink">
+      <img src="Delight icons/Cart.png" width="22" height="22" alt="Cart">
+      <span>Cart</span>
+    </a>
+    <a href="#" id="profileLink">
+      <img src="Delight icons/Profile.png" width="22" height="22" alt="Profile">
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <!-- ===== SKELETON ===== -->
+  <div id="storesSkeleton">
+    <div class="skeleton-store-card">
+      <div class="skeleton-avatar shimmer"></div>
+      <div class="skeleton-store-name shimmer"></div>
+      <div class="skeleton-store-tag shimmer"></div>
+    </div>
+    <div class="skeleton-store-card">
+      <div class="skeleton-avatar shimmer"></div>
+      <div class="skeleton-store-name shimmer"></div>
+      <div class="skeleton-store-tag shimmer"></div>
+    </div>
+    <div class="skeleton-store-card">
+      <div class="skeleton-avatar shimmer"></div>
+      <div class="skeleton-store-name shimmer"></div>
+      <div class="skeleton-store-tag shimmer"></div>
+    </div>
+    <div class="skeleton-store-card">
+      <div class="skeleton-avatar shimmer"></div>
+      <div class="skeleton-store-name shimmer"></div>
+      <div class="skeleton-store-tag shimmer"></div>
+    </div>
+  </div>
+
+  <!-- ===== STORES GRID ===== -->
+  <div id="storesContainer" style="display:none;"></div>
+
+  <script>
+    // ── Tab Bar ──────────────────────────────────────────────────
+    function setActiveTab(tab, page) {
+      document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const underline = document.querySelector('.tab-bar .underline');
+      const idx = Array.from(document.querySelectorAll('.tab-bar .tab')).indexOf(tab);
+      underline.style.width = '50%';
+      underline.style.transform = `translateX(${idx * 100}%)`;
+      setTimeout(() => {
+        if (window.location.pathname.split('/').pop() !== page) window.location.href = page;
+      }, 180);
+    }
+
+    // Set underline to Shops tab on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const underline = document.querySelector('.tab-bar .underline');
+      if (underline) { underline.style.width = '50%'; underline.style.transform = 'translateX(100%)'; }
+      loadStores();
+    });
+
+    // ── Data ─────────────────────────────────────────────────────
+    let allStores = [];
+
+    async function loadStores() {
+      const skeleton  = document.getElementById('storesSkeleton');
+      const container = document.getElementById('storesContainer');
+      try {
+        const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/all-stores");
+        allStores = await res.json();
+        if (!allStores || !allStores.length) {
+          skeleton.style.display = 'none';
+          container.style.display = 'grid';
+          container.innerHTML = `<div class="not-found-stores"><img src="Delight icons/not-found.png" alt="No stores"><h3>No Stores Found</h3><p>Check back later for new shops.</p></div>`;
+          return;
+        }
+        allStores = allStores.sort(() => Math.random() - 0.5);
+        skeleton.style.display = 'none';
+        container.style.display = 'grid';
+        displayStores(allStores);
+      } catch (err) {
+        skeleton.style.display = 'none';
+        container.style.display = 'grid';
+        container.innerHTML = `<div class="not-found-stores"><img src="Delight icons/not-found.png" alt="Error"><h3>Cannot Load Stores</h3><p>Check your internet connection.</p></div>`;
+      }
+    }
+
+    function displayStores(stores) {
+      const container = document.getElementById('storesContainer');
+      if (!stores.length) {
+        container.innerHTML = `<div class="not-found-stores"><img src="Delight icons/not-found.png" alt="No Results"><h3>No Store Found</h3><p>Try a different search.</p></div>`;
+        return;
+      }
+      container.innerHTML = stores.map((store, i) => `
+        <a class="store-card" href="Store.html?phone=${store.phone}" style="animation-delay:${(i % 10) * 45}ms">
+          <img class="store-avatar" src="${store.logo || 'Delight icons/store.png'}" alt="${store.name}" loading="lazy"
+               onerror="this.src='Delight icons/store.png'">
+          <h3>${store.name}</h3>
+          <span class="store-badge"><i class="fas fa-store"></i> Visit Shop</span>
+        </a>`).join('');
+      setupScrollReveal();
+    }
+
+    // ── Scroll Reveal ────────────────────────────────────────────
+    function setupScrollReveal() {
+      const cards = document.querySelectorAll('.store-card');
+      if (!('IntersectionObserver' in window)) {
+        cards.forEach(c => c.classList.add('visible'));
+        return;
+      }
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+      cards.forEach(c => observer.observe(c));
+    }
+
+    // ── Search ───────────────────────────────────────────────────
+    const storeSearch   = document.getElementById('storeSearch');
+    const clearBtn      = document.getElementById('searchClearBtn');
+
+    storeSearch.addEventListener('input', () => {
+      const q = storeSearch.value.trim();
+      clearBtn.style.display = q ? 'block' : 'none';
+      displayStores(allStores.filter(s => s.name.toLowerCase().includes(q.toLowerCase())));
+    });
+
+    clearBtn.addEventListener('click', () => {
+      storeSearch.value = '';
+      clearBtn.style.display = 'none';
+      displayStores(allStores);
+      storeSearch.focus();
+    });
+  </script>
+
+</body>
+</html>

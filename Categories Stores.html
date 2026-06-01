@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="Categories.css">
+<title>Category - Delight.pk</title>
+
+</head>
+<body>
+  
+<!-- 🔥 UPDATED HEADER - Store Name & Logo from API -->
+<header class="main-header">
+  <div class="header-left">
+   <div class="logo-wrap">
+    <img id="storeLogo" src="Delight icons/store.png"width="36" height="36" alt="logo" >
+   </div>
+    <h1 class="brand-name" id="storeName">Loading...</h1>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item active" data-cat="Men Fashion">
+    <img src="Category icons/men.png" alt="Men Fashion">
+    Men Fashion
+  </div>
+  <div class="sidebar-item" data-cat="Women Fashion">
+    <img src="Category icons/women.png" alt="Women Fashion">
+    Women Fashion
+  </div>
+  <div class="sidebar-item" data-cat="Mobiles">
+    <img src="Category icons/mobile.png" alt="Mobiles">
+    Mobiles
+  </div>
+  <div class="sidebar-item" data-cat="Mobile Accessories">
+    <img src="Category icons/mobile Accessories.png" alt="Mobile Accessories">
+    Accessories
+  </div>
+  <div class="sidebar-item" data-cat="Electronics">
+    <img src="Category icons/electronics.png" alt="Electronics">
+    Electronics
+  </div>
+  <div class="sidebar-item" data-cat="Beauty Products">
+    <img src="Category icons/beauty category.png" alt="Beauty">
+    Beauty
+  </div>
+  <div class="sidebar-item" data-cat="Home & Living">
+    <img src="Category icons/home category.png" alt="Home">
+    Home & Living
+  </div>
+  <div class="sidebar-item" data-cat="Watches">
+    <img src="Category icons/clock.png" alt="Watches">
+    Watches
+  </div>
+  <div class="sidebar-item" data-cat="Shoes">
+    <img src="Category icons/shoes category.png" alt="Shoes">
+    Shoes
+  </div>
+  <div class="sidebar-item" data-cat="Bags">
+    <img src="Category icons/bag.png" alt="Bags">
+    Bags
+  </div>
+  <div class="sidebar-item" data-cat="Jewelry">
+    <img src="Category icons/jewelry category.png" alt="Jewelry">
+    Jewelry
+  </div>
+  <div class="sidebar-item" data-cat="Baby Products">
+    <img src="Category icons/baby.png" alt="Baby">
+    Baby
+  </div>
+  <div class="sidebar-item" data-cat="Sports Items">
+    <img src="Category icons/sports.png" alt="Sports">
+    Sports
+  </div>
+  <div class="sidebar-item" data-cat="Gaming">
+    <img src="Category icons/game.png" alt="Gaming">
+    Gaming
+  </div>
+  <div class="sidebar-item" data-cat="Computer Accessories">
+    <img src="Category icons/laptop.png" alt="Computer">
+    Computer
+  </div>
+  <div class="sidebar-item" data-cat="Other">
+    <img src="Category icons/other.png" alt="Other">
+    Other
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content" id="contentArea"></div>
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bar">
+    <a href="#" id="homeLink">
+      <img src="Delight icons/Home.png" width="22" height="22" alt="Home">
+      <span>Home</span>
+    </a>
+    <a href="#" id="categoriesLink" class="active">
+      <img src="Delight icons/Categories.png" width="22" height="22" alt="Categories">
+      <span>Categories</span>
+    </a>
+    <a href="#" id="cartLink">
+      <img src="Delight icons/Cart.png" width="22" height="22" alt="Cart">
+      <span>Cart</span>
+    </a>
+    <a href="#" id="profileLink">
+      <img src="Delight icons/Profile.png" width="22" height="22" alt="Profile">
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  
+  <!-- 🔥 NAVIGATION FIX SCRIPT -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sellerPhone = urlParams.get("phone");
+      
+      if (sellerPhone) {
+        document.getElementById("homeLink").href = `Store.html?phone=${sellerPhone}`;
+        document.getElementById("categoriesLink").href = `Categories Stores.html?phone=${sellerPhone}`;
+        document.getElementById("cartLink").href = `Cart Stores.html?phone=${sellerPhone}`;
+        document.getElementById("profileLink").href = `Profile Stores.html?phone=${sellerPhone}`;
+      }
+    });
+  </script>
+
+<script>
+const categories = {
+  "Men Fashion": ["T-Shirts", "Jeans", "Shoes", "Watches", "Caps"],
+  "Women Fashion": ["Dresses", "Handbags", "Jewelry Sets", "Sandals", "Makeup Kits"],
+  "Mobiles": ["Smartphones", "Keypad Phones", "Mobile Covers", "Chargers", "Earbuds"],
+  "Mobile Accessories": ["Power Banks", "Smart Watches", "Data Cables", "Earphones", "Stands & Holders"],
+  "Electronics": ["LED TV", "Bluetooth Speakers", "Headphones", "Cameras", "Smart Gadgets"],
+  "Beauty Products": ["Perfumes", "Lipsticks", "Face Creams", "Hair Oils", "Makeup Brushes"],
+  "Home & Living": ["Home Gadgets", "Cleaning Tools", "Kitchen Accessories", "Room Decor", "Small Appliances"],
+  "Watches": ["Smart Watches", "Digital Watches", "Analog Watches", "Couple Watches", "Fitness Bands"],
+  "Shoes": ["Sneakers", "Sandals", "Joggers", "Slippers", "Formal Shoes"],
+  "Bags": ["School Bags", "Laptop Bags", "Hand Bags", "Travel Bags", "Wallets"],
+  "Jewelry": ["Rings", "Necklaces", "Earrings", "Bracelets", "Anklets"],
+  "Baby Products": ["Baby Toys", "Baby Clothes"],
+  "Sports Items": ["Gym Gloves", "Water Bottles", "Dumbbells", "Football", "Yoga Mats"],
+  "Gaming": ["Gamepads", "Gaming Headsets", "PS5 / Xbox Accessories", "Mouse Pads", "Gaming Keyboards"],
+  "Computer Accessories": ["Keyboards", "Mouse", "USB Drives", "Headsets", "Laptop Stands"],
+  "Other": ["Other Things"]
+};
+
+const subcategoryIcons = {
+  "T-Shirts": "Category icons/tshirt.png",
+  "Jeans": "Category icons/jeans.png",
+  "Shoes": "Category icons/shoes.png",
+  "Watches": "Category icons/watch.png",
+  "Caps": "Category icons/cap.png",
+  "Dresses": "Category icons/dress.png",
+  "Handbags": "Category icons/handbag.png",
+  "Jewelry Sets": "Category icons/jewelry.png",
+  "Sandals": "Category icons/sandals.png",
+  "Makeup Kits": "Category icons/makeup.png",
+  "Smartphones": "Category icons/phone.png",
+  "Keypad Phones": "Category icons/keypad.png",
+  "Mobile Covers": "Category icons/cover.png",
+  "Chargers": "Category icons/charger.png",
+  "Earbuds": "Category icons/earbuds.png",
+  "Power Banks": "Category icons/powerbanks.png",
+  "Smart Watches": "Category icons/smartwatches.png",
+  "Data Cables": "Category icons/datacables.png",
+  "Earphones": "Category icons/earphones.png",
+  "Stands & Holders": "Category icons/stands_holders.png",
+  "LED TV": "Category icons/ledtv.png",
+  "Bluetooth Speakers": "Category icons/bluetoothspeakers.png",
+  "Headphones": "Category icons/headphones.png",
+  "Cameras": "Category icons/cameras.png",
+  "Smart Gadgets": "Category icons/smartgadgets.png",
+  "Perfumes": "Category icons/perfumes.png",
+  "Lipsticks": "Category icons/lipsticks.png",
+  "Face Creams": "Category icons/facecreams.png",
+  "Hair Oils": "Category icons/hairoils.png",
+  "Makeup Brushes": "Category icons/makeupbrushes.png",
+  "Home Gadgets": "Category icons/homegadgets.png",
+  "Cleaning Tools": "Category icons/cleaningtools.png",
+  "Kitchen Accessories": "Category icons/kitchenaccessories.png",
+  "Room Decor": "Category icons/roomdecor.png",
+  "Small Appliances": "Category icons/smallappliances.png",
+  "Digital Watches": "Category icons/digitalwatches.png",
+  "Analog Watches": "Category icons/analogwatches.png",
+  "Couple Watches": "Category icons/couplewatches.png",
+  "Fitness Bands": "Category icons/fitnessbands.png",
+  "Sneakers": "Category icons/sneakers.png",
+  "Joggers": "Category icons/joggers.png",
+  "Slippers": "Category icons/slippers.png",
+  "Formal Shoes": "Category icons/formalshoes.png",
+  "School Bags": "Category icons/schoolbags.png",
+  "Laptop Bags": "Category icons/laptopbags.png",
+  "Hand Bags": "Category icons/handbags2.png",
+  "Travel Bags": "Category icons/travelbags.png",
+  "Wallets": "Category icons/wallets.png",
+  "Rings": "Category icons/rings.png",
+  "Necklaces": "Category icons/necklaces.png",
+  "Earrings": "Category icons/earrings.png",
+  "Bracelets": "Category icons/bracelets.png",
+  "Anklets": "Category icons/anklets.png",
+  "Baby Toys": "Category icons/babytoys.png",
+  "Baby Clothes": "Category icons/babyclothes.png",
+  "Gym Gloves": "Category icons/gymgloves.png",
+  "Water Bottles": "Category icons/waterbottles.png",
+  "Dumbbells": "Category icons/dumbbells.png",
+  "Football": "Category icons/football.png",
+  "Yoga Mats": "Category icons/yogamats.png",
+  "Gamepads": "Category icons/gamepads.png",
+  "Gaming Headsets": "Category icons/gamingheadsets.png",
+  "PS5 / Xbox Accessories": "Category icons/ps5xbox.png",
+  "Mouse Pads": "Category icons/mousepads.png",
+  "Gaming Keyboards": "Category icons/gamingkeyboards.png",
+  "Keyboards": "Category icons/keyboards.png",
+  "Mouse": "Category icons/mouse.png",
+  "USB Drives": "Category icons/usbdrives.png",
+  "Headsets": "Category icons/headsets.png",
+  "Laptop Stands": "Category icons/laptopstands.png",
+  "Other Things": "Category icons/other.png"
+};
+
+const urlParams = new URLSearchParams(window.location.search);
+const sellerPhone = urlParams.get("phone");
+
+async function loadStoreInfo() {
+  if (!sellerPhone) return;
+  
+  try {
+    const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/all-stores");
+    const allStores = await res.json();
+    const store = allStores.find(s => s.phone === sellerPhone);
+    
+    if (store) {
+      document.getElementById("storeName").textContent = store.name || "DELIGHT.PK";
+      if (store.logo) {
+        document.getElementById("storeLogo").src = store.logo;
+      }
+    }
+  } catch (err) {
+    console.error("Error loading store info:", err);
+  }
+}
+
+function fixNavigation() {
+  if (!sellerPhone) return;
+  
+  document.getElementById("homeLink").href = `Store.html?phone=${sellerPhone}`;
+  document.getElementById("categoriesLink").href = `Categories Stores.html?phone=${sellerPhone}`;
+  document.getElementById("cartLink").href = `Cart Stores.html?phone=${sellerPhone}`;
+  document.getElementById("profileLink").href = `Profile Stores.html?phone=${sellerPhone}`;
+}
+
+function showSubcategories(catName) {
+  const area = document.getElementById('contentArea');
+  area.innerHTML = `
+    <h2>${catName}</h2>
+    <div class="sub-grid">
+      ${categories[catName]
+        .map(sub => `
+          <div class="sub-item" data-value="${catName} - ${sub}">
+            <img src="${subcategoryIcons[sub] || 'Category icons/default.png'}" alt="${sub}">
+            <span>${sub}</span>
+          </div>
+        `)
+        .join("")}
+    </div>
+  `;
+
+  document.querySelectorAll('.sub-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const selectedCategory = el.dataset.value;
+      window.location.href = `Category Results Stores.html?category=${encodeURIComponent(selectedCategory)}&phone=${sellerPhone}`;
+    });
+  });
+}
+
+document.querySelectorAll('.sidebar-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    btn.classList.add('active');
+    showSubcategories(btn.dataset.cat);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadStoreInfo();
+  fixNavigation();
+  showSubcategories("Men Fashion");
+});
+</script>
+
+</body>
+</html>

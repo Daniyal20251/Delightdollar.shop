@@ -1,0 +1,105 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Category</title>  
+  <link rel="stylesheet" href="Home.css"> 
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f8f8f8;
+    }
+
+    /* 🔹 Modern Gradient Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(135deg, #ff6a00, #ff3d00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 65px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      border-bottom-left-radius: 35px;
+      border-bottom-right-radius: 35px;
+      z-index: 20;
+    }
+
+    /* 🔹 Back Button */
+    .back-btn {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .back-btn img {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* 🔹 Category Title */
+    header h4 {
+      color: #fff;
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      margin: 0;
+      text-align: center;
+      line-height: 65px;
+    }
+
+    /* 🔹 Container */
+    .container {
+      margin-top: 40px;
+      padding: 18px;
+    }
+
+    /* 🔹 Loading */
+    #loading {
+      text-align: center;
+      color: #666;
+      margin-top: 50px;
+      font-weight: 500;
+    }
+  </style>
+</head>  
+<body>  
+  
+  <!-- 🔹 Top Header -->  
+  <header>  
+    <div class="back-btn" onclick="history.back()">  
+      <img src="Delight icons/Back.png" alt="Back">  
+    </div>  
+    <h4 id="categoryTitle">Category</h4>  
+  </header>  
+  
+  <!-- 🔹 Product Container -->  
+  <div class="container" id="itemContainer"></div>  
+  
+  <!-- 🔹 Loading -->  
+  <div class="loading" id="loading">Loading...</div>  
+  
+  <script src="CategoryResult.js"></script>  
+</body>  
+</html>

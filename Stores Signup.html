@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="login.css">
+  <title>www.delight.pk - Sign Up</title>
+ 
+</head>
+<body>
+
+  <div class="delight">
+    <h2>Hi 👋</h2>
+    <h2>WELCOME TO</h2>
+    <h1 id="welcomeTitle">DELIGHT SHOP 🛍</h1>
+  </div>
+
+  <!-- 🔥 Store Logo Dynamic -->
+  <div class="store-info" id="storeInfo">
+    <img id="storeLogo" src="Delight icons/Logo.png" alt="Store Logo">
+  </div>
+
+  <div class="login">
+    <h3>Sign Up</h3>
+
+    <form id="signupForm">
+      <input type="text" id="name" required placeholder="Enter your name"><br>
+      <input type="number" id="phone" required placeholder="Enter your phone number" minlength="11" maxlength="11"><br>
+      
+      <!-- 🔥 Password with Eye Toggle -->
+      <div class="password-wrapper">
+        <input type="password" id="pass" required placeholder="Minimum 6 characters" minlength="6">
+        <span class="toggle-password" onclick="togglePassword()">
+          <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </span>
+      </div><br>
+      
+      <input type="submit" value="Sign Up">
+    </form>
+
+    <p style="margin-top:12px; font-size:13px; text-align:center;">
+      Already have an account?
+      <a href="#" id="loginLink" style="color:#ef6c00; text-decoration:none; font-weight:bold;">🔑 Login</a>
+    </p>
+  </div>
+
+  <script>
+    // 🔥 PASSWORD TOGGLE FUNCTION
+    function togglePassword() {
+      const passInput = document.getElementById("pass");
+      const eyeIcon = document.getElementById("eyeIcon");
+      
+      if (passInput.type === "password") {
+        passInput.type = "text";
+        // Eye-off icon
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        passInput.type = "password";
+        // Eye icon
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    }
+
+    // 🔥 GET STORE PHONE FROM URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sellerPhone = urlParams.get("phone");
+
+    // 🔥 LOAD STORE INFO (Logo + Name)
+    async function loadStoreInfo() {
+      if (!sellerPhone) return;
+      
+      try {
+        const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/all-stores");
+        const allStores = await res.json();
+        const store = allStores.find(s => s.phone === sellerPhone);
+        
+        if (store) {
+          document.getElementById("welcomeTitle").textContent = (store.name || "STORE") + " 🛍";
+          if (store.logo) {
+            document.getElementById("storeLogo").src = store.logo;
+          }
+        }
+      } catch (err) {
+        console.error("Error loading store info:", err);
+      }
+    }
+
+    // 🔥 FIX LOGIN LINK WITH STORE PHONE
+    function fixLinks() {
+      if (sellerPhone) {
+        document.getElementById("loginLink").href = `Stores Login.html?phone=${sellerPhone}`;
+      } else {
+        document.getElementById("loginLink").href = "login.html";
+      }
+    }
+
+    // Signup Form
+    const form = document.getElementById("signupForm");
+
+    form.addEventListener("submit", async function(event){
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const pass = document.getElementById("pass").value.trim();
+
+      if (!name || phone.length !== 11 || pass.length < 6) {
+        alert("⚠️ Please enter valid details!");
+        return;
+      }
+
+      const payload = { name, phone, password: pass };
+
+      try {
+        const baseUrl = "https://delight-backend--araindaniyalo2.replit.app";
+
+        const res = await fetch(baseUrl + "/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          localStorage.setItem("customer", JSON.stringify({
+            id: data.user.id,
+            name: data.user.name,
+            phone: data.user.phone
+          }));
+
+          alert("✅ Signup successful!");
+          
+          if (sellerPhone) {
+            window.location.href = `Profile Stores.html?phone=${sellerPhone}`;
+          } else {
+            window.location.href = "profile.html";
+          }
+        } else {
+          alert(data.message || "Signup failed. Try again.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ Unable to connect. Please check backend.");
+      }
+    });
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", () => {
+      loadStoreInfo();
+      fixLinks();
+    });
+  </script>
+
+</body>
+</html>

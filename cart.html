@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="Cart.css">
+<title>Your Cart</title>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<div class="cart-header">
+  <h2>Your Cart</h2>
+  <p>Review your items before checkout</p>
+</div>
+
+<div id="cartContainer"></div>
+<div class="total" id="totalPrice">Total: Rs. 0</div>
+<button class="buy-all-btn" id="buyBtn" onclick="goToOrderPage()">Buy All</button>
+<button class="continue-btn" id="continueBtn" style="display:none;" onclick="goHome()">Continue Shopping</button>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bar">
+    <a href="index.html">
+      <img src="Delight icons/Home.png" width="22" height="22" alt="Home">
+      <span>Home</span>
+    </a>
+    <a href="Categories.html">
+      <img src="Delight icons/Categories.png" width="22" height="22" alt="Categories">
+      <span>Categories</span>
+    </a>
+    <a href="cart.html" class="active">
+      <img src="Delight icons/Cart.png" width="22" height="22" alt="Cart">
+      <span>Cart</span>
+    </a>
+    <a href="profile.html">
+      <img src="Delight icons/Profile.png" width="22" height="22" alt="Profile">
+      <span>Profile</span>
+    </a>
+  </nav>
+  
+<script>
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartContainer = document.getElementById('cartContainer');
+const totalPriceEl = document.getElementById('totalPrice');
+const buyBtn = document.getElementById('buyBtn');
+const continueBtn = document.getElementById('continueBtn');
+
+function renderCart() {
+  cartContainer.innerHTML = "";
+  let total = 0;
+
+  if (cart.length === 0) {
+    cartContainer.innerHTML = `
+      <div class="empty-cart-container">
+        <img src="Delight icons/ShoppingTrolly.png" alt="Empty Cart" class="empty-cart-icon">
+        <div class="empty-cart-title">Your Cart is Empty</div>
+        <div class="empty-cart-subtitle">Looks like you haven't added<br>anything to your cart yet.</div>
+      </div>
+    `;
+    totalPriceEl.textContent = "";
+    buyBtn.style.display = "none";
+    continueBtn.style.display = "block";
+    return;
+  }
+
+  cart.forEach((item, index) => {
+    const price = Number(item.price);
+    const qty = item.quantity;
+    const subTotal = price * qty;
+
+    total += subTotal;
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML = `
+      <img src="${item.image}" alt="${item.title}" />
+      <div class="cart-item-info">
+        <div class="cart-item-title">${item.title}</div>
+
+        <div class="cart-item-price">
+          Rs. ${price} × ${qty} <br>
+          <strong>Total: Rs. ${subTotal}</strong>
+        </div>
+
+        <div class="quantity-controls">
+          <button class="qty-btn" onclick="decreaseQty(${index})">−</button>
+          <span>${qty}</span>
+          <button class="qty-btn" onclick="increaseQty(${index})">+</button>
+        </div>
+      </div>
+
+      <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+    `;
+    cartContainer.appendChild(div);
+  });
+
+  totalPriceEl.textContent = "Total: Rs. " + total;
+  buyBtn.style.display = "block";
+  continueBtn.style.display = "none";
+}
+
+function increaseQty(index) {
+  cart[index].quantity += 1;
+  updateCart();
+}
+
+function decreaseQty(index) {
+  if (cart[index].quantity > 1) {
+    cart[index].quantity -= 1;
+  } else {
+    cart.splice(index, 1);
+  }
+  updateCart();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+function updateCart() {
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+function goToOrderPage() {
+  localStorage.setItem("orderCartItems", JSON.stringify(cart));
+  window.location.href = "cartorder.html";
+}
+
+function goHome() {
+  window.location.href = "index.html";
+}
+
+renderCart();
+</script>
+
+</body>
+</html>

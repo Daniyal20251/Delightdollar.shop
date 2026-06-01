@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Profile.css">
+  <title>My Profile</title>
+</head>
+<body>
+  <header>
+  <p>My Account</p>
+  <div class="bar">
+    <a href="#" id="HomeLink"><img src="Delight icons/Back.png" width="30" height="20" class="logo"></a>
+  </div>
+  </header>
+
+  <!-- Login / Signup Buttons -->
+  <div id="authButtons">
+    <a href="#" id="loginBtn" class="btn1"><button>Login</button></a>
+    <a href="#" id="signupBtn" class="btn2"><button>Sign Up</button></a>
+  </div>
+
+  <!-- Welcome Text -->
+  <h2 id="welcomeText" style="display:none; color:#f38300; text-align:center;">Loading...</h2>
+
+  <!-- Logout Button -->
+  <div class="btn">
+    <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+  </div>
+
+  <!-- My Orders -->
+  <div id="myOrders" class="od" style="display:none;">
+    <a href="myorders.html" style="text-decoration:none; font-weight:bold; color:#ef6c00;">
+      🧾 My Orders
+    </a>
+  </div>
+
+  <!-- Always Visible Links -->
+  <div class="od"><a href="Help.html">❓ Help Center</a></div>
+  <div class="od"><a href="Settings.html" style="color:#ef6c00;">⚙ Settings</a></div>
+  <div class="od"><a href="privacy.html" style="color:#ef6c00;">🔒 Privacy Policy</a></div>
+  <div class="od"><a href="terms.html" style="color:#ef6c00;">📜 Terms & Conditions</a></div>
+  
+   <script>
+    // 🔥 GET STORE PHONE FROM URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sellerPhone = urlParams.get("phone");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (sellerPhone) {
+        // Back button
+        document.getElementById("HomeLink").href = `Store.html?phone=${sellerPhone}`;
+        // Login button
+        document.getElementById("loginBtn").href = `Stores Login.html?phone=${sellerPhone}`;
+        // Signup button
+        document.getElementById("signupBtn").href = `Stores Signup.html?phone=${sellerPhone}`;
+      }
+    });
+  </script>
+
+  <script>
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    const name = customer ? customer.name : null;
+
+    if (name) {
+      document.getElementById("authButtons").style.display = "none";
+      document.getElementById("welcomeText").style.display = "block";
+      document.getElementById("welcomeText").innerText = "Hello, " + name + " 👋";
+      document.getElementById("logoutBtn").style.display = "inline-block";
+      document.getElementById("myOrders").style.display = "block";
+    }
+
+    function logout() {
+      localStorage.removeItem("customer");
+      window.location.reload();
+    }
+  </script>
+
+</body>
+</html>

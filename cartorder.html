@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>www.delight.pk - Cart Order</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; max-width: 480px; margin: auto; padding: 20px; background-color: #fdfdfd; color: #333; }
+h2 { text-align: center; margin-bottom: 20px; color: #ef6c00; }
+input, textarea, button, select { width: 100%; padding: 12px; margin-top: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; box-sizing: border-box; }
+button { background-color: #ef6c00; color: #fff; font-size: 17px; font-weight: bold; cursor: pointer; border: none; transition: background 0.3s; }
+button:hover { background-color: #d65c00; }
+.product-info { padding: 12px; background: #fff3e0; border: 1px solid #ef6c00; border-radius: 10px; margin-bottom: 20px; }
+.product-card { padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ef6c00; background-color: #fff8e1; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display:flex; gap:10px; }
+.product-title { font-weight: bold; margin-bottom: 4px; }
+.price { color: #d65c00; font-weight: bold; margin-bottom: 8px; }
+.label { font-weight: 500; font-size: 14px; margin-top: 4px; }
+.total-box { background-color: #fff3e0; border: 1px solid #ef6c00; border-radius: 10px; padding: 12px; font-weight: bold; margin-top: 15px; text-align:right; }
+.description { font-size: 13px; color: #555; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<h2>🛒 Place Your Order</h2>
+<div id="productInfoContainer" class="product-info"></div>
+
+<form id="orderForm" onsubmit="handleSubmit(event)">
+  <input type="text" name="Name" placeholder="Your Name" required>
+  <input type="text" name="Phone" minlength="11" maxlength="11" placeholder="Phone Number" required>
+  <select name="province" required>
+    <option value="">Province / Region</option>
+    <option value="Sindh">Sindh</option>
+    <option value="Punjab">Punjab</option>
+    <option value="Balochistan">Balochistan</option>
+    <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+    <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+    <option value="Azad Kashmir">Azad Kashmir</option>
+  </select>
+  <input type="text" name="City" placeholder="City" required>
+  <input type="text" name="Zone" placeholder="Zone / Area" required>
+  <textarea name="Full_Address" placeholder="Full Address" rows="3" required></textarea>
+  <button type="submit">✅ Confirm All Orders</button>
+</form>
+
+<script>
+
+// Login check
+const customer = JSON.parse(localStorage.getItem("customer"));
+if(!customer){
+    alert("Please login first!");
+    window.location.href = "login.html";
+}
+
+// Cart data
+const container = document.getElementById("productInfoContainer");
+const orderCart = JSON.parse(localStorage.getItem("orderCartItems")) || [];
+
+if(orderCart.length === 0){
+  container.innerHTML = "<h3 style='color:red;text-align:center;'>❌ No products in cart.</h3>";
+} else {
+  let grandTotal = 0;
+  container.innerHTML = "";
+
+  orderCart.forEach(item => {
+    const price = Number(item.price) || 0;
+    const quantity = Number(item.quantity) || 1;
+    const delivery = Number(item.delivery) || 0;
+    const total = price * quantity + delivery;
+    grandTotal += total;
+
+    container.innerHTML += `
+      <div class="product-card">
+        <img src="${item.image}" style="width:90px;height:90px;border-radius:8px;object-fit:cover;">
+        <div>
+          <div class="product-title">${item.title}</div>
+          <div class="label">Color: ${item.selectedColor || "N/A"}</div>
+          <div class="label">Size: ${item.selectedSize || "N/A"}</div>
+          <div class="label">Quantity: ${quantity}</div>
+          <div class="label">Price: Rs. ${price} × ${quantity} = Rs. ${price*quantity}</div>
+          <div class="label">Delivery: Rs. ${delivery}</div>
+          <div class="label"><strong>Total:</strong> Rs. ${total}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML += `<div class="total-box">💰 Grand Total: Rs. ${grandTotal}</div>`;
+}
+
+
+// ⭐ FINAL ORDER SUBMIT FUNCTION ⭐
+async function handleSubmit(event){
+  event.preventDefault();
+
+  const form = document.getElementById("orderForm");
+  const button = form.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.innerText = "⏳ Placing Orders...";
+
+  const formData = new FormData(form);
+  const userData = Object.fromEntries(formData.entries());
+
+  for(const item of orderCart){
+
+    const price = Number(item.price) || 0;
+    const quantity = Number(item.quantity) || 1;
+    const delivery = Number(item.delivery) || 0;
+    const total = price * quantity + delivery;
+
+    // ⚠️ MOST IMPORTANT FIX
+    const orderData = {
+      Productid: customer.phone,   // ✔ Login phone as Productid (Correct Fix)
+      buyerName: userData.Name,
+      buyerPhone: userData.Phone,
+      address: `${userData.province}, ${userData.City}, ${userData.Zone}, ${userData.Full_Address}`,
+
+      product: {
+        title: item.title,
+        price: price,
+        color: item.selectedColor || "N/A",
+        size: item.selectedSize || "N/A",
+        image: item.image,
+        delivery: delivery,
+        description: item.description || "",
+        total: total
+      },
+
+      sellerPhone: item.sellerPhone
+    };
+
+    try {
+      await fetch("https://delight-backend--araindaniyalo2.replit.app/place-order", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(orderData)
+      });
+    } catch(e){
+      console.error("Order error:", e);
+    }
+  }
+
+  // ✅ Order success → form clear + cart clear + redirect
+  form.reset();
+  localStorage.removeItem("orderCartItems");
+  window.location.href = "thanks.html";
+}
+
+</script>
+
+</body>
+</html>

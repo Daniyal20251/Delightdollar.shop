@@ -1,0 +1,211 @@
+body{
+    background-color: #fff9ec;
+    border:10px solid #ff9800;
+    border-radius:20px;
+    padding:20px;
+    margin: 15px;
+    padding-bottom: 10px;
+    animation: bo 2s infinite;
+  }
+  @keyframes bo {
+  0%   { border-color: #ff6c00; }
+  25%  { border-color: #ffcc00; }
+  50%  { border-color: #ff6454; }
+  75%  { border-color: #ff4b4b; }
+  100% { border-color: #ff6c00; }
+}
+
+.animated-border {
+  border: 4px solid;
+  animation: bo 3s linear infinite;
+  border-radius: 8px;
+}
+  .delight{
+    font-weight: 5px;
+    font-size:small;
+    color:#ff9800;
+    text-shadow:2px 5px #d0d0d0;
+    margin:10px;
+    margin-bottom: -10px;
+    border-radius:20px;
+    animation: b 2s infinite;
+  }
+  @keyframes b{
+  100%   { color: #ff6c00; }
+  100%  { color: #ffa726; }
+  100%  { color: #ffcc80; }
+  100%  { color: #ffa726; }
+  100% { color: #ff6c00; }
+  }
+  .logo{
+    text-align:center;
+  }
+  .login{
+    border:3px solid black;
+    border-radius:20px;
+    margin: 0px;
+    background-color:#fafafa;
+    padding:5px 25px 25px 25px;
+  }
+  .login h3{
+    text-align: center;
+  }
+  #name,
+  .login input[type="number"],
+  .login input[type="password"]{
+    width:90%;
+    height:15px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    border: 1px solid black;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 10px;
+  }
+  .login input[type="submit"]{
+    border: none;
+    border-radius: 20px;
+    width: 150px;
+    height: 35px;
+    color: white;
+    font-weight: bold;
+    background: linear-gradient(45deg, #f4511e, #ffa726);
+  }
+
+/* ========== EYE TOGGLE + ANIMATIONS ========== */
+
+.password-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+/* 🔥 FIX: Eye wala input same margin/padding ke saath */
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  width: 90%;
+  height: 15px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  border: 1px solid black;
+  border-radius: 8px;
+  font-size: 14px;
+  padding: 10px;
+  padding-right: 9px;
+}
+
+/* 🔥 FIX: Eye ka position bilkul right mein same line mein */
+.toggle-password {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  color: #ff9800;
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ========== PROFESSIONAL ANIMATIONS ========== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Apply animations */
+.delight {
+  animation: fadeInUp 1s ease-out, b 2s infinite;
+}
+
+.store-info {
+  animation: bounceIn 1s ease-out 0.3s both;
+}
+
+.login {
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.login h3 {
+  animation: slideIn 0.8s ease-out 0.7s both;
+}
+
+.login form {
+  animation: fadeIn 1s ease-out 0.9s both;
+}
+
+.login input[type="submit"] {
+  animation: pulse 2s infinite 1.5s;
+}
+
+    .store-info {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .store-info img {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ef6c00;
+      animation: pulseGlow 2s infinite;
+    }
+    .store-info h4 {
+      color: #ef6c00;
+      margin: 10px 0 0 0;
+      font-size: 22px;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(239, 108, 0, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(239, 108, 0, 0.6); }
+    }
+  

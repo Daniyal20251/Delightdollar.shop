@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store - Delightpk</title>
+  <meta name="theme-color" content="#ff6b00">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Home.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    /* ── Store Header Override ── */
+    .store-header-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .store-logo-wrap {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.7);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: white;
+    }
+    .store-logo-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    #sellerName {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    /* ── Products Section Header ── */
+    .products-section-header {
+      padding: 14px 14px 6px;
+      display: flex; align-items: center;
+    }
+    .products-section-header .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; font-weight: 800;
+      display: flex; align-items: center; gap: 6px;
+      color: #1a1a2e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="main-header">
+    <div class="store-header-info">
+      <div class="store-logo-wrap">
+        <img id="sellerLogo" src="Delight icons/store.png" alt="Store Logo">
+      </div>
+      <div class="store-name-wrap">
+        <h1 id="sellerName">Loading...</h1>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="search-wrap">
+        <div class="search-input-box">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+          <button class="search-clear-btn" id="searchClearBtn" style="display:none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== SEARCH SUGGESTIONS DROPDOWN ===== -->
+  <div id="suggestionsDropdown" class="suggestions-dropdown" style="display:none;"></div>
+
+  <!-- ===== SEARCH PANEL ===== -->
+  <div id="searchPanel" class="search-panel">
+    <div class="panel-header">
+      <span class="recent-title"><i class="fas fa-history"></i> Recent Searches</span>
+      <button id="clearHistoryBtn" class="clear-btn">Clear All</button>
+    </div>
+    <ul id="recentSearches"></ul>
+    <div class="popular-section">
+      <p class="popular-label"><i class="fas fa-fire"></i> Popular</p>
+      <div class="popular-chips">
+        <span onclick="fillAndSearch('Smart Watch')">Smart Watch</span>
+        <span onclick="fillAndSearch('Earbuds')">Earbuds</span>
+        <span onclick="fillAndSearch('Tripod')">Tripod</span>
+        <span onclick="fillAndSearch('Power Bank')">Power Bank</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 64px;"></div>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bar">
+    <a href="#" id="homeLink" class="active">
+      <img src="Delight icons/Home.png" width="22" height="22" alt="Home">
+      <span>Home</span>
+    </a>
+    <a href="#" id="categoriesLink">
+      <img src="Delight icons/Categories.png" width="22" height="22" alt="Categories">
+      <span>Categories</span>
+    </a>
+    <a href="#" id="cartLink">
+      <img src="Delight icons/Cart.png" width="22" height="22" alt="Cart">
+      <span>Cart</span>
+    </a>
+    <a href="#" id="profileLink">
+      <img src="Delight icons/Profile.png" width="22" height="22" alt="Profile">
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <!-- ===== ADS SKELETON ===== -->
+  <div id="adsSkeleton" class="ads-skeleton">
+    <div class="skeleton-ad shimmer"></div>
+  </div>
+
+  <!-- ===== SWIPER ADS SLIDER ===== -->
+  <div class="swiper mySwiper" id="adSlider" style="display:none;">
+    <div class="swiper-wrapper" id="swiperWrapper"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- ===== PRODUCTS SKELETON ===== -->
+  <div id="skeletonContainer" class="skeleton-container">
+    <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-price shimmer"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-price shimmer"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-price shimmer"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-price shimmer"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-price shimmer"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-price shimmer"></div></div>
+  </div>
+
+  <!-- ===== PRODUCTS SECTION HEADER ===== -->
+  <div class="products-section-header" id="productsHeader" style="display:none;">
+ <div class="section-title"><span>🛍️</span> All Products</div>
+  </div>
+
+  <!-- ===== PRODUCT GRID ===== -->
+  <div id="itemContainer" class="container" style="display:none;"></div>
+
+  <!-- ===== NAV LINKS FIX ===== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const phone = new URLSearchParams(window.location.search).get("phone");
+      if (phone) {
+        document.getElementById("homeLink").href = `Store.html?phone=${phone}`;
+        document.getElementById("categoriesLink").href = `Categories Stores.html?phone=${phone}`;
+        document.getElementById("cartLink").href = `Cart Stores.html?phone=${phone}`;
+        document.getElementById("profileLink").href = `Profile Stores.html?phone=${phone}`;
+      }
+    });
+  </script>
+
+  <script src="Store.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</body>
+</html>

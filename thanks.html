@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thank You - Delight.pk</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, 
+      #ffbc86, #a7eff9, #ffffff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .thank-you-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      padding: 40px 30px;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeInUp 0.7s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .thank-you-card h2 {
+      font-size: 26px;
+      color: #2e7d32;
+      margin-top: 20px;
+    }
+
+    .thank-you-card p {
+      font-size: 16px;
+      color: #444;
+      margin-top: 10px;
+      margin-bottom: 25px;
+    }
+
+    .thank-you-card a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg,#43cea2, #4390de,#ffb37a);
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 30px;
+      transition: background 0.3s ease;
+    }
+
+    .thank-you-card a:hover {
+      background: linear-gradient(135deg, #185a9d, #43cea2);
+    }
+
+    /* Lottie container */
+    #successAnimation {
+      width: 120px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="thank-you-card">
+    <div id="successAnimation"></div>
+    <h2>Thank You!</h2>
+    <p>Your order has been placed successfully. We appreciate your trust in us and look forward to serving you again. 🛒🛍  </p>
+    <a href="myorders.html">👀 View Orders</a>
+  </div>
+
+  <!-- ✅ Lottie Files Script -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <script>
+    const animation = document.createElement('lottie-player');
+    animation.setAttribute('src', 'https://assets1.lottiefiles.com/packages/lf20_jbrw3hcz.json');
+    animation.setAttribute('background', 'transparent');
+    animation.setAttribute('speed', '1');
+    animation.setAttribute('loop', 'false');
+    animation.setAttribute('autoplay', '');
+    animation.style.width = '120px';
+    document.getElementById('successAnimation').appendChild(animation);
+  </script>
+</body>
+</html>
