@@ -79,6 +79,12 @@ body {
 }
 .brand-name span { color: rgba(255,255,255,0.85); }
 
+.brand-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
 .header-right { flex: 1; max-width: 220px; margin-left: 10px; }
 
 /* ============================================
