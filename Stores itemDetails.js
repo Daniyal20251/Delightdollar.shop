@@ -795,10 +795,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       img.style.display = 'block';
     }
 
-    // Reset zoom
-    isZoomed = false;
+    // Reset zoom & pan
+    resetZoomState();
     img.classList.remove("zoomed");
-    img.style.transform = "scale(1)";
+    img.style.transform = "";
+    img.style.transition = "";
   }
 
   function updateFullscreenDots() {
@@ -831,110 +832,139 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const hint = document.createElement("div");
     hint.className = "zoom-hint";
-    hint.textContent = "👆 Double tap to zoom";
+    hint.textContent = "Pinch to zoom • Swipe to browse";
     document.querySelector(".fullscreen-content").appendChild(hint);
 
     setTimeout(() => hint.remove(), 3500);
   }
 
-  // Double tap to zoom
+  // ── Zoom + Pan + Swipe state ──
+  const MIN_SCALE = 1, MAX_SCALE = 5;
+  let fsScale = 1, fsLastScale = 1;
+  let fsDragX = 0, fsDragY = 0;
+  let fsLastX = 0, fsLastY = 0;
+  let fsPinchDist = 0;
+  let fsIsDragging = false;
+  let fsTouchCount = 0;
+  let fsSwipeStartX = 0;
+
+  function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+  function resetZoomState() {
+    fsScale = 1; fsLastScale = 1;
+    fsDragX = 0; fsDragY = 0;
+    isZoomed = false;
+  }
+
+  function applyFsTransform(img, smooth) {
+    img.style.transition = smooth ? "transform 0.2s ease" : "none";
+    img.style.transform = `translate(${fsDragX}px, ${fsDragY}px) scale(${fsScale})`;
+    img.style.transformOrigin = "center center";
+  }
+
+  function clampFsDrag(img) {
+    if (fsScale <= 1) { fsDragX = 0; fsDragY = 0; return; }
+    const maxX = (img.offsetWidth * (fsScale - 1)) / 2;
+    const maxY = (img.offsetHeight * (fsScale - 1)) / 2;
+    fsDragX = clamp(fsDragX, -maxX, maxX);
+    fsDragY = clamp(fsDragY, -maxY, maxY);
+  }
+
   function setupFullscreenGestures() {
-    const img = document.getElementById("fullscreenImage");
     const container = document.getElementById("fullscreenImageContainer");
+    if (!container) return;
 
-    if (!img || !container) return;
-
-    // Double tap zoom
-    img.addEventListener("click", function(e) {
-      const currentTime = new Date().getTime();
-      const tapLength = currentTime - lastTapTime;
-
-      if (tapLength < 300 && tapLength > 0) {
-        isZoomed = !isZoomed;
-
-        if (isZoomed) {
-          img.classList.add("zoomed");
-          const rect = img.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-          img.style.transformOrigin = `${x}% ${y}%`;
-        } else {
-          img.classList.remove("zoomed");
-          img.style.transformOrigin = "center center";
-        }
+    // ── Double tap to zoom ──
+    container.addEventListener("dblclick", function(e) {
+      const img = document.getElementById("fullscreenImage");
+      if (!img) return;
+      if (fsScale > 1) {
+        resetZoomState();
+      } else {
+        fsScale = 2.5;
+        const rect = container.getBoundingClientRect();
+        const tapX = e.clientX - rect.left - rect.width / 2;
+        const tapY = e.clientY - rect.top - rect.height / 2;
+        fsDragX = -tapX * (fsScale - 1) / fsScale;
+        fsDragY = -tapY * (fsScale - 1) / fsScale;
+        clampFsDrag(img);
+        isZoomed = true;
       }
-
-      lastTapTime = currentTime;
+      applyFsTransform(img, true);
     });
 
-    // Swipe for next/prev in fullscreen
-    let fsStartX = 0;
-    let fsStartY = 0;
+    function getTouchDist(t1, t2) {
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
 
     container.addEventListener("touchstart", function(e) {
-      fsStartX = e.touches[0].clientX;
-      fsStartY = e.touches[0].clientY;
-    }, { passive: true });
+      const img = document.getElementById("fullscreenImage");
+      if (!img) return;
+      fsTouchCount = e.touches.length;
+      fsIsDragging = false;
 
-    container.addEventListener("touchend", function(e) {
-      if (isZoomed) return;
-
-      const endX = e.changedTouches[0].clientX;
-      const endY = e.changedTouches[0].clientY;
-      const diffX = fsStartX - endX;
-      const diffY = fsStartY - endY;
-
-      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-        if (diffX > 0) {
-          changeFullscreenImage(1);
-        } else {
-          changeFullscreenImage(-1);
-        }
-      }
-    }, { passive: true });
-
-    // Pinch zoom support
-    let initialDistance = 0;
-    let initialScale = 1;
-
-    container.addEventListener("touchstart", function(e) {
-      if (e.touches.length === 2) {
-        initialDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-        initialScale = isZoomed ? 2 : 1;
-      }
-    }, { passive: true });
-
-    container.addEventListener("touchmove", function(e) {
       if (e.touches.length === 2) {
         e.preventDefault();
-        const currentDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-
-        const scale = (currentDistance / initialDistance) * initialScale;
-
-        if (scale > 1.5) {
-          isZoomed = true;
-          img.style.transform = `scale(${Math.min(scale, 3)})`;
-        } else {
-          isZoomed = false;
-          img.style.transform = "scale(1)";
-        }
+        fsPinchDist = getTouchDist(e.touches[0], e.touches[1]);
+        fsLastScale = fsScale;
+      } else if (e.touches.length === 1) {
+        fsSwipeStartX = e.touches[0].clientX;
+        fsLastX = e.touches[0].clientX;
+        fsLastY = e.touches[0].clientY;
       }
     }, { passive: false });
 
-    container.addEventListener("touchend", function() {
-      if (isZoomed) {
-        img.classList.add("zoomed");
-      } else {
-        img.classList.remove("zoomed");
-        img.style.transform = "";
+    container.addEventListener("touchmove", function(e) {
+      const img = document.getElementById("fullscreenImage");
+      if (!img) return;
+
+      if (e.touches.length === 2) {
+        // ── Pinch Zoom ──
+        e.preventDefault();
+        const dist = getTouchDist(e.touches[0], e.touches[1]);
+        fsScale = clamp(fsLastScale * (dist / fsPinchDist), MIN_SCALE, MAX_SCALE);
+        isZoomed = fsScale > 1;
+        clampFsDrag(img);
+        applyFsTransform(img, false);
+        fsIsDragging = true;
+      } else if (e.touches.length === 1 && fsScale > 1) {
+        // ── Pan when zoomed ──
+        e.preventDefault();
+        const dx = e.touches[0].clientX - fsLastX;
+        const dy = e.touches[0].clientY - fsLastY;
+        fsDragX += dx;
+        fsDragY += dy;
+        fsLastX = e.touches[0].clientX;
+        fsLastY = e.touches[0].clientY;
+        clampFsDrag(img);
+        applyFsTransform(img, false);
+        fsIsDragging = true;
       }
-    });
+      // scale=1 pe touchmove block nahi — swipe kaam kare
+    }, { passive: false });
+
+    container.addEventListener("touchend", function(e) {
+      const img = document.getElementById("fullscreenImage");
+      if (!img) return;
+
+      // ── Swipe (only when not zoomed and not dragging) ──
+      if (fsTouchCount === 1 && fsScale <= 1 && !fsIsDragging) {
+        const endX = e.changedTouches[0].clientX;
+        const diff = endX - fsSwipeStartX;
+        if (diff > 50) changeFullscreenImage(-1);
+        else if (diff < -50) changeFullscreenImage(1);
+      }
+
+      // Snap back if barely zoomed
+      if (fsScale < 1.05) {
+        resetZoomState();
+        applyFsTransform(img, true);
+      }
+
+      fsTouchCount = 0;
+    }, { passive: true });
   }
 
   // Keyboard navigation for fullscreen

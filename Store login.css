@@ -26,7 +26,7 @@ body{
     color:#ff9800;
     text-shadow:2px 5px #d0d0d0;
     margin:10px;
-    margin-bottom: 40px;
+    margin-bottom: 80px;
     border-radius:20px;
     animation: b 2s infinite;
   }
@@ -267,7 +267,6 @@ body{
   width: 70%;
   max-width: 340px;
 }
-
 .toast {
   display: flex;
   align-items: center;
@@ -291,6 +290,5 @@ body{
 .toast-error   { background: linear-gradient(135deg, #e53935, #ef5350); }
 .toast-success { background: linear-gradient(135deg, #2e7d32, #43a047); }
 .toast-info    { background: linear-gradient(135deg, #1565c0, #1e88e5); }
-
 .toast-icon { font-size: 16px; flex-shrink: 0; }
 .toast-msg  { line-height: 1.4; }

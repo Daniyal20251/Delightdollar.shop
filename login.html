@@ -8,6 +8,9 @@
 </head>
 <body>
 
+  <!-- 🔥 TOAST CONTAINER -->
+  <div id="toastContainer"></div>
+
   <div class="delight">
     <h2>Welcome Back 👋</h2>
     <h2>TO</h2>
@@ -35,7 +38,10 @@
         </span>
       </div><br>
       
-      <input type="submit" value="Login">
+      <button type="submit" class="submit-btn" id="loginBtn">
+        <span class="btn-text">Login</span>
+        <span class="btn-spinner" id="loginSpinner"></span>
+      </button>
     </form>
 
     <p style="margin-top:12px; font-size:13px; text-align:center;">
@@ -45,21 +51,51 @@
   </div>
 
   <script>
-    // 🔥 EYE TOGGLE FUNCTION
+    // ═══════════════════════════════
+    // TOAST SYSTEM
+    // ═══════════════════════════════
+    function showToast(message, type = "error") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast toast-" + type;
+
+      const icons = { success: "✅", error: "⚠️", info: "ℹ️" };
+      toast.innerHTML = `<span class="toast-icon">${icons[type] || "ℹ️"}</span><span class="toast-msg">${message}</span>`;
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add("show"));
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => toast.remove(), 350);
+      }, 3000);
+    }
+
+    // ═══════════════════════════════
+    // SPINNER HELPERS
+    // ═══════════════════════════════
+    function setLoading(loading) {
+      const btn = document.getElementById("loginBtn");
+      const spinner = document.getElementById("loginSpinner");
+      btn.disabled = loading;
+      btn.classList.toggle("loading", loading);
+      spinner.style.display = loading ? "inline-block" : "none";
+    }
+
+    // ═══════════════════════════════
+    // EYE TOGGLE
+    // ═══════════════════════════════
     function togglePassword() {
       const passInput = document.getElementById("pass");
       const eyeIcon = document.getElementById("eyeIcon");
-      
       if (passInput.type === "password") {
         passInput.type = "text";
-        // Eye-off icon (slash wala)
         eyeIcon.innerHTML = `
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
           <line x1="1" y1="1" x2="23" y2="23"></line>
         `;
       } else {
         passInput.type = "password";
-        // Eye icon (normal)
         eyeIcon.innerHTML = `
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
@@ -67,27 +103,28 @@
       }
     }
 
-    const form = document.getElementById("loginForm");
-
-    form.addEventListener("submit", async function(event){
+    // ═══════════════════════════════
+    // FORM SUBMIT
+    // ═══════════════════════════════
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
       event.preventDefault();
 
       const phone = document.getElementById("phone").value.trim();
       const pass = document.getElementById("pass").value.trim();
 
       if (phone.length !== 11 || pass.length < 6) {
-        alert("⚠️ Please enter valid phone and password!");
+        showToast("Please enter valid phone and password!", "error");
         return;
       }
 
-      const payload = { phone, password: pass };
+      setLoading(true);
 
       try {
-        const baseUrl = "https://delight-backend--araindaniyalo2.replit.app"; 
+        const baseUrl = "https://delight-backend--araindaniyalo2.replit.app";
         const res = await fetch(baseUrl + "/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ phone, password: pass })
         });
 
         const data = await res.json();
@@ -98,19 +135,21 @@
             name: data.user.name,
             phone: data.user.phone
           }));
-          window.location.href = "profile.html";
-          return;
+          showToast("Login successful! Redirecting...", "success");
+          setTimeout(() => { window.location.href = "profile.html"; }, 1000);
         } else {
-          alert(data.message || "Login failed. Check credentials.");
+          showToast(data.message || "Login failed. Check credentials.", "error");
+          setLoading(false);
         }
       } catch (err) {
         console.warn("⚠️ Backend offline → Using localStorage fallback");
-
         const local = JSON.parse(localStorage.getItem("customer"));
         if (local && local.phone === phone) {
-          window.location.href = "profile.html";
+          showToast("Login successful! Redirecting...", "success");
+          setTimeout(() => { window.location.href = "profile.html"; }, 1000);
         } else {
-          alert("⚠️ User not found locally. Please signup.");
+          showToast("User not found locally. Please signup.", "error");
+          setLoading(false);
         }
       }
     });

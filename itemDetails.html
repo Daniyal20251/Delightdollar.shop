@@ -68,7 +68,6 @@
     </div>
     <div class="dots" id="dotsContainer"></div>
 
-    <!-- ⭐ RATING HEADER -->
     <div class="rating-header" id="ratingHeader">
       <span class="rating-stars" id="ratingStars"></span>
       <span class="rating-score" id="ratingScore"></span>
@@ -94,7 +93,7 @@
       <div class="section-content">
         <div id="description"></div>
       </div>
-    </div> 
+    </div>
 
     <div class="section">
       <div class="section-header" onclick="toggleSection(this)">
@@ -145,7 +144,6 @@
 
   <!-- 🛒 Buttons -->
   <div class="back">
-    <!-- 💬 DELIGHT CHAT BUTTON (Replaced WhatsApp) -->
     <div class="whatsapp-btn">
       <a href="#" id="chatLink" onclick="event.preventDefault(); openDelightChat();">
         <button type="button">Chat</button>
@@ -159,14 +157,22 @@
     </div>
   </div>
 
-  <!-- FULLSCREEN VIEWER -->
+  <!-- ══════════════════════════════════════════
+       FULLSCREEN VIEWER — with zoom + swipe + video
+       ══════════════════════════════════════════ -->
   <div class="fullscreen-viewer" id="fullscreenViewer">
     <div class="fullscreen-overlay" onclick="closeFullscreenViewer()"></div>
     <div class="fullscreen-content">
       <button class="fullscreen-close" onclick="closeFullscreenViewer()">✕</button>
+
+      <!-- Media Wrapper (image or video shown here) -->
       <div class="fullscreen-image-container" id="fullscreenImageContainer">
-        <img id="fullscreenImage" src="" alt="Fullscreen View">
+        <!-- img/video injected by JS -->
       </div>
+
+      <!-- Zoom hint -->
+      <div class="zoom-hint" id="zoomHint">Pinch to zoom • Swipe to browse</div>
+
       <div class="fullscreen-controls">
         <button class="fullscreen-prev" onclick="changeFullscreenImage(-1)">❮</button>
         <span class="fullscreen-counter" id="fullscreenCounter">1 / 1</span>
@@ -184,12 +190,10 @@
         <h3>Write a Review</h3>
         <button class="review-modal-close" onclick="closeReviewModal()">✕</button>
       </div>
-
       <div class="review-product-info">
         <img src="" alt="Product" id="reviewProductImg">
         <span id="reviewProductTitle"></span>
       </div>
-
       <div class="review-star-select">
         <p>How would you rate this product?</p>
         <div class="star-rating-input-daraz" id="starRatingInputDaraz">
@@ -201,10 +205,8 @@
         </div>
         <div class="rating-text" id="ratingText">Tap a star to rate</div>
       </div>
-
       <div class="review-form-fields">
         <textarea id="reviewMessageDaraz" placeholder="Share your experience with this product..." rows="4"></textarea>
-
         <div class="review-photo-upload">
           <label>Add Photos (optional)</label>
           <div class="photo-upload-area" onclick="document.getElementById('reviewPhotoInput').click()">
@@ -215,7 +217,6 @@
           <div class="review-photo-preview" id="reviewPhotoPreview"></div>
         </div>
       </div>
-
       <button class="submit-review-daraz" id="submitReviewBtn" onclick="submitReviewDaraz()">Submit Review</button>
     </div>
   </div>
@@ -234,6 +235,5 @@
   </div>
 
   <script src="itemDetails.js"></script>
-
 </body>
 </html>

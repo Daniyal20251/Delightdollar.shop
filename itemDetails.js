@@ -1,24 +1,21 @@
-// itemDetails.js - Daraz Style Reviews - FULLY WORKING
+// itemDetails.js — Fully fixed: zoom, swipe, video, reviews
 document.addEventListener("DOMContentLoaded", async function() {
   const API_BASE = "https://delight-backend--araindaniyalo2.replit.app";
-  
+
   const urlParams = new URLSearchParams(window.location.search);
   const productFromUrl = urlParams.get('product');
   let item = null;
 
-  // ── Load Product ──
   if (productFromUrl) {
     try {
       const res = await fetch(API_BASE + "/products");
       if (res.ok) {
         const allProducts = await res.json();
-        item = allProducts.find(p => 
+        item = allProducts.find(p =>
           (p.title || "").toLowerCase() === decodeURIComponent(productFromUrl).toLowerCase()
         );
       }
-    } catch (err) {
-      console.warn("Backend fetch failed:", err);
-    }
+    } catch (err) { console.warn("Backend fetch failed:", err); }
   }
 
   if (!item) item = JSON.parse(localStorage.getItem("selectedItem"));
@@ -32,38 +29,32 @@ document.addEventListener("DOMContentLoaded", async function() {
     return;
   }
 
-  // Price calculation
   function getPriceData(product) {
     if (product.finalPrice && product.originalPrice) {
-      const discountAmount = product.originalPrice - product.finalPrice;
-      const discountPercentage = product.originalPrice > 0 
-        ? Math.round((discountAmount / product.originalPrice) * 100) : 0;
-      return { originalPrice: product.originalPrice, finalPrice: product.finalPrice, discountAmount, discountPercentage };
+      const d = product.originalPrice - product.finalPrice;
+      const pct = product.originalPrice > 0 ? Math.round((d / product.originalPrice) * 100) : 0;
+      return { originalPrice: product.originalPrice, finalPrice: product.finalPrice, discountAmount: d, discountPercentage: pct };
     }
     const basePrice = parseInt((product.price || "0").toString().replace(/[^\d]/g, "")) || 0;
     const discountAmount = parseInt((product.discount || "0").toString().replace(/[^\d]/g, "")) || 0;
-    const originalPrice = basePrice;
     const finalPrice = basePrice - discountAmount;
     const discountPercentage = basePrice > 0 ? Math.round((discountAmount / basePrice) * 100) : 0;
-    return { originalPrice, finalPrice, discountAmount, discountPercentage };
+    return { originalPrice: basePrice, finalPrice, discountAmount, discountPercentage };
   }
 
   if (productFromUrl && item) {
     const pd = getPriceData(item);
-    item.originalPrice = pd.originalPrice;
-    item.finalPrice = pd.finalPrice;
-    item.discountAmount = pd.discountAmount;
-    item.discountPercentage = pd.discountPercentage;
+    Object.assign(item, pd);
   }
 
   localStorage.setItem("selectedItem", JSON.stringify(item));
   if (productFromUrl && item.id) {
-    fetch(API_BASE + "/products/" + item.id + "/view", { method: "POST" }).catch(()=>{});
+    fetch(API_BASE + "/products/" + item.id + "/view", { method: "POST" }).catch(() => {});
   }
 
   // ── State ──
   let currentIndex = 0;
-  let startX = 0;
+  let sliderStartX = 0;
   let selectedColor = "";
   let selectedSize = "";
   let reviewRating = 0;
@@ -72,7 +63,6 @@ document.addEventListener("DOMContentLoaded", async function() {
   let displayedReviews = 0;
   const REVIEWS_PER_PAGE = 3;
 
-  // ── Elements ──
   const slider = document.getElementById("imageSlider");
   const dotsContainer = document.getElementById("dotsContainer");
   const titleEl = document.getElementById("title");
@@ -83,9 +73,8 @@ document.addEventListener("DOMContentLoaded", async function() {
   const cartCountEl = document.getElementById("cartCount");
 
   // ═══════════════════════════════════════════════════
-  // ⭐ REVIEWS SYSTEM - FULLY WORKING
+  // REVIEWS
   // ═══════════════════════════════════════════════════
-
   function renderStars(rating) {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -98,350 +87,224 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   async function loadRatingAndReviews() {
     if (!item || !item.id) return;
-    
     try {
-      // Rating summary
       const ratingRes = await fetch(API_BASE + "/product-rating/" + item.id);
       const ratingData = await ratingRes.json();
-      
       const avg = ratingData.averageRating || 0;
       const total = ratingData.totalReviews || 0;
-      
-      // Inline header
+
       const rs = document.getElementById("ratingStars");
       const rsc = document.getElementById("ratingScore");
       const rc = document.getElementById("ratingCount");
       if (rs) rs.textContent = renderStars(avg);
       if (rsc) rsc.textContent = avg.toFixed(1);
       if (rc) rc.textContent = "(" + total + ")";
-      
-      // Big summary
+
       const rbn = document.getElementById("ratingBigNumber");
       const rbs = document.getElementById("ratingBigStars");
       const rtt = document.getElementById("ratingTotalText");
       const rtc = document.getElementById("reviewsTotalCount");
-      
       if (rbn) rbn.textContent = avg.toFixed(1);
       if (rbs) rbs.textContent = renderStars(avg);
       if (rtt) rtt.textContent = total + " Ratings";
       if (rtc) rtc.textContent = "(" + total + ")";
-      
-      // Bars
+
       const barsDiv = document.getElementById("ratingBarsDaraz");
       if (barsDiv && ratingData.ratingBreakdown) {
-        barsDiv.innerHTML = [5,4,3,2,1].map(function(star) {
+        barsDiv.innerHTML = [5,4,3,2,1].map(star => {
           const count = ratingData.ratingBreakdown[star] || 0;
           const pct = total > 0 ? (count / total * 100) : 0;
           return '<div class="rating-bar-daraz">' +
             '<span>' + star + '★</span>' +
             '<div class="rating-bar-track"><div class="rating-bar-fill-daraz" style="width:' + pct + '%"></div></div>' +
-            '<span>' + count + '</span>' +
-          '</div>';
+            '<span>' + count + '</span></div>';
         }).join("");
       }
-      
-      // Reviews list
+
       const revRes = await fetch(API_BASE + "/reviews/" + item.id);
       const revData = await revRes.json();
       allReviews = revData.reviews || [];
       displayedReviews = 0;
       renderReviewsList();
-      
-    } catch (err) {
-      console.error("Load reviews error:", err);
-    }
+    } catch (err) { console.error("Load reviews error:", err); }
   }
 
   function renderReviewsList() {
     const container = document.getElementById("reviewsListDaraz");
     const loadMoreBtn = document.getElementById("loadMoreReviews");
     if (!container) return;
-    
     if (allReviews.length === 0) {
-      container.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No reviews yet. Be the first to review!</p>';
+      container.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
       if (loadMoreBtn) loadMoreBtn.style.display = "none";
       return;
     }
-    
     const toShow = allReviews.slice(0, displayedReviews + REVIEWS_PER_PAGE);
-    
-    container.innerHTML = toShow.map(function(review) {
-      var initial = (review.buyerName || "A").charAt(0).toUpperCase();
-      var maskedName = review.buyerName ? review.buyerName.charAt(0) + "***" + review.buyerName.slice(-1) : "Anonymous";
-      var dateStr = new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-      
+    container.innerHTML = toShow.map(review => {
+      const initial = (review.buyerName || "A").charAt(0).toUpperCase();
+      const maskedName = review.buyerName ? review.buyerName.charAt(0) + "***" + review.buyerName.slice(-1) : "Anonymous";
+      const dateStr = new Date(review.createdAt).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
       return '<div class="review-card-daraz">' +
         '<div class="review-header-daraz">' +
           '<div class="review-buyer-info">' +
             '<div class="review-buyer-avatar">' + initial + '</div>' +
-            '<div>' +
-              '<div class="review-buyer-name">' + maskedName + '</div>' +
+            '<div><div class="review-buyer-name">' + maskedName + '</div>' +
               (review.isVerifiedPurchase ? '<div class="review-verified">✓ Verified Purchase</div>' : '') +
-            '</div>' +
-          '</div>' +
+            '</div></div>' +
           '<div class="review-stars-daraz">' + renderStars(review.rating) + '</div>' +
         '</div>' +
         '<div class="review-date-daraz">' + dateStr + '</div>' +
         '<div class="review-message-daraz">' + (review.message || "") + '</div>' +
-        (review.images && review.images.length > 0 ? 
-          '<div class="review-photos-daraz">' + 
-            review.images.map(function(img) { 
-              return '<img src="' + img + '" onclick="openFullscreenViewerFromSrc(\'' + img + '\')">'; 
-            }).join("") + 
-          '</div>' : '') +
+        (review.images && review.images.length ? '<div class="review-photos-daraz">' + review.images.map(img => '<img src="' + img + '" onclick="openFullscreenViewerFromSrc(\'' + img + '\')">').join("") + '</div>' : '') +
       '</div>';
     }).join("");
-    
     displayedReviews = toShow.length;
-    if (loadMoreBtn) {
-      loadMoreBtn.style.display = displayedReviews < allReviews.length ? "block" : "none";
-    }
+    if (loadMoreBtn) loadMoreBtn.style.display = displayedReviews < allReviews.length ? "block" : "none";
   }
 
-  window.loadMoreReviews = function() {
-    renderReviewsList();
-  };
+  window.loadMoreReviews = () => renderReviewsList();
 
   window.showAllReviews = function() {
-    var modal = document.getElementById("allReviewsModal");
-    var content = document.getElementById("allReviewsContent");
+    const modal = document.getElementById("allReviewsModal");
+    const content = document.getElementById("allReviewsContent");
     if (!modal || !content) return;
-    
-    content.innerHTML = allReviews.map(function(review) {
-      var initial = (review.buyerName || "A").charAt(0).toUpperCase();
-      var maskedName = review.buyerName ? review.buyerName.charAt(0) + "***" + review.buyerName.slice(-1) : "Anonymous";
-      var dateStr = new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-      
+    content.innerHTML = allReviews.map(review => {
+      const initial = (review.buyerName || "A").charAt(0).toUpperCase();
+      const maskedName = review.buyerName ? review.buyerName.charAt(0) + "***" + review.buyerName.slice(-1) : "Anonymous";
+      const dateStr = new Date(review.createdAt).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
       return '<div class="review-card-daraz" style="margin-bottom:16px;">' +
         '<div class="review-header-daraz">' +
           '<div class="review-buyer-info">' +
             '<div class="review-buyer-avatar">' + initial + '</div>' +
-            '<div>' +
-              '<div class="review-buyer-name">' + maskedName + '</div>' +
+            '<div><div class="review-buyer-name">' + maskedName + '</div>' +
               (review.isVerifiedPurchase ? '<div class="review-verified">✓ Verified Purchase</div>' : '') +
-            '</div>' +
-          '</div>' +
+            '</div></div>' +
           '<div class="review-stars-daraz">' + renderStars(review.rating) + '</div>' +
         '</div>' +
         '<div class="review-date-daraz">' + dateStr + '</div>' +
         '<div class="review-message-daraz">' + (review.message || "") + '</div>' +
-        (review.images && review.images.length > 0 ? 
-          '<div class="review-photos-daraz">' + 
-            review.images.map(function(img) { 
-              return '<img src="' + img + '" onclick="openFullscreenViewerFromSrc(\'' + img + '\')">'; 
-            }).join("") + 
-          '</div>' : '') +
+        (review.images && review.images.length ? '<div class="review-photos-daraz">' + review.images.map(img => '<img src="' + img + '">').join("") + '</div>' : '') +
       '</div>';
     }).join("");
-    
     modal.style.display = "block";
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
   };
-
   window.closeAllReviews = function() {
-    var modal = document.getElementById("allReviewsModal");
-    if (modal) {
-      modal.style.display = "none";
-      modal.classList.remove("active");
-    }
+    const modal = document.getElementById("allReviewsModal");
+    if (modal) { modal.style.display = "none"; modal.classList.remove("active"); }
     document.body.style.overflow = "";
   };
 
-  // ── Review Modal ──
   window.openReviewModal = function() {
-    var customer = JSON.parse(localStorage.getItem("customer"));
-    if (!customer) {
-      alert("Please login to write a review");
-      window.location.href = "login.html";
-      return;
-    }
-    
-    var modal = document.getElementById("reviewModalDaraz");
-    var productImg = document.getElementById("reviewProductImg");
-    var productTitle = document.getElementById("reviewProductTitle");
-    
-    if (productImg) productImg.src = item.images?.[0] || item.image || "noimg.png";
-    if (productTitle) productTitle.textContent = item.title || "Product";
-    
-    // Reset
-    reviewRating = 0;
-    reviewPhotoFiles = [];
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (!customer) { alert("Please login to write a review"); window.location.href = "login.html"; return; }
+    const modal = document.getElementById("reviewModalDaraz");
+    document.getElementById("reviewProductImg").src = item.images?.[0] || item.image || "noimg.png";
+    document.getElementById("reviewProductTitle").textContent = item.title || "Product";
+    reviewRating = 0; reviewPhotoFiles = [];
     updateStarDisplay(0);
     document.getElementById("reviewMessageDaraz").value = "";
     document.getElementById("reviewPhotoPreview").innerHTML = "";
     document.getElementById("ratingText").textContent = "Tap a star to rate";
-    
-    if (modal) {
-      modal.style.display = "flex";
-      modal.classList.add("active");
-      document.body.style.overflow = "hidden";
-    }
+    if (modal) { modal.style.display = "flex"; modal.classList.add("active"); document.body.style.overflow = "hidden"; }
   };
-
   window.closeReviewModal = function() {
-    var modal = document.getElementById("reviewModalDaraz");
-    if (modal) {
-      modal.style.display = "none";
-      modal.classList.remove("active");
-    }
+    const modal = document.getElementById("reviewModalDaraz");
+    if (modal) { modal.style.display = "none"; modal.classList.remove("active"); }
     document.body.style.overflow = "";
   };
 
-  // ── Star Rating Click ──
   function setupStarClicks() {
-    var stars = document.querySelectorAll("#starRatingInputDaraz .star-big");
-    stars.forEach(function(star) {
+    document.querySelectorAll("#starRatingInputDaraz .star-big").forEach(star => {
       star.addEventListener("click", function() {
-        var rating = parseInt(this.getAttribute("data-rating"));
-        reviewRating = rating;
-        updateStarDisplay(rating);
-        var texts = ["Terrible", "Poor", "Average", "Good", "Excellent"];
-        document.getElementById("ratingText").textContent = texts[rating - 1] || "Tap a star to rate";
+        reviewRating = parseInt(this.getAttribute("data-rating"));
+        updateStarDisplay(reviewRating);
+        const texts = ["Terrible","Poor","Average","Good","Excellent"];
+        document.getElementById("ratingText").textContent = texts[reviewRating - 1] || "Tap a star to rate";
       });
     });
   }
-
   function updateStarDisplay(rating) {
-    var stars = document.querySelectorAll("#starRatingInputDaraz .star-big");
-    stars.forEach(function(star, idx) {
+    document.querySelectorAll("#starRatingInputDaraz .star-big").forEach((star, idx) => {
       star.textContent = idx < rating ? "★" : "☆";
       star.classList.toggle("active", idx < rating);
     });
   }
 
-  // ── Photo Upload ──
   window.handleReviewPhotos = function(input) {
-    var preview = document.getElementById("reviewPhotoPreview");
-    preview.innerHTML = "";
-    reviewPhotoFiles = [];
-    
-    Array.from(input.files).forEach(function(file) {
+    const preview = document.getElementById("reviewPhotoPreview");
+    preview.innerHTML = ""; reviewPhotoFiles = [];
+    Array.from(input.files).forEach(file => {
       reviewPhotoFiles.push(file);
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var div = document.createElement("div");
+      const reader = new FileReader();
+      reader.onload = e => {
+        const div = document.createElement("div");
         div.className = "review-photo-preview-item";
-        div.innerHTML = 
-          '<img src="' + e.target.result + '">' +
-          '<button class="review-photo-remove" onclick="this.parentElement.remove()">✕</button>';
+        div.innerHTML = '<img src="' + e.target.result + '"><button class="review-photo-remove" onclick="this.parentElement.remove()">✕</button>';
         preview.appendChild(div);
       };
       reader.readAsDataURL(file);
     });
   };
 
-  // ── Submit Review ──
   window.submitReviewDaraz = async function() {
-    if (reviewRating === 0) {
-      alert("Please select a rating by tapping the stars");
-      return;
-    }
-    
-    var message = document.getElementById("reviewMessageDaraz").value.trim();
-    if (!message) {
-      alert("Please write a review message");
-      return;
-    }
-    
-    var customer = JSON.parse(localStorage.getItem("customer"));
-    if (!customer) {
-      alert("Please login first");
-      return;
-    }
-    
-    var btn = document.getElementById("submitReviewBtn");
-    btn.disabled = true;
-    btn.textContent = "Submitting...";
-    
+    if (reviewRating === 0) { alert("Please select a rating"); return; }
+    const message = document.getElementById("reviewMessageDaraz").value.trim();
+    if (!message) { alert("Please write a review message"); return; }
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (!customer) { alert("Please login first"); return; }
+    const btn = document.getElementById("submitReviewBtn");
+    btn.disabled = true; btn.textContent = "Submitting...";
     try {
-      var formData = new FormData();
+      const formData = new FormData();
       formData.append("buyerPhone", customer.phone);
       formData.append("buyerName", customer.name || "Anonymous");
       formData.append("rating", reviewRating);
       formData.append("message", message);
-      
-      reviewPhotoFiles.forEach(function(file) {
-        formData.append("images", file);
-      });
-      
-      var res = await fetch(API_BASE + "/reviews/" + item.id, {
-        method: "POST",
-        body: formData
-      });
-      
-      var data = await res.json();
-      if (data.success) {
-        alert("✅ Review submitted successfully!");
-        closeReviewModal();
-        loadRatingAndReviews();
-      } else {
-        alert(data.message || "Failed to submit review");
-      }
-    } catch (err) {
-      alert("❌ Error submitting review. Please try again.");
-      console.error(err);
-    }
-    
-    btn.disabled = false;
-    btn.textContent = "Submit Review";
+      reviewPhotoFiles.forEach(f => formData.append("images", f));
+      const res = await fetch(API_BASE + "/reviews/" + item.id, { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success) { alert("✅ Review submitted!"); closeReviewModal(); loadRatingAndReviews(); }
+      else alert(data.message || "Failed to submit review");
+    } catch (err) { alert("❌ Error submitting review."); console.error(err); }
+    btn.disabled = false; btn.textContent = "Submit Review";
   };
 
   // ═══════════════════════════════════════════════════
-  // SHARE FUNCTIONS
+  // SHARE
   // ═══════════════════════════════════════════════════
   window.openShareModal = function() {
-    var modal = document.getElementById("shareModal");
-    var shareLink = document.getElementById("shareLink");
-    var currentUrl = window.location.href.split('?')[0];
+    const modal = document.getElementById("shareModal");
+    const shareLink = document.getElementById("shareLink");
+    const currentUrl = window.location.href.split('?')[0];
     shareLink.value = currentUrl + "?product=" + encodeURIComponent(item.title);
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
   };
-
-  window.closeShareModal = function(e) {
-    if (e && e.target === document.getElementById("shareModal")) {
-      document.getElementById("shareModal").classList.remove("active");
-      document.body.style.overflow = "";
-    }
-  };
-
   window.closeShareModalDirect = function() {
     document.getElementById("shareModal").classList.remove("active");
     document.body.style.overflow = "";
   };
-
   window.shareVia = function(platform) {
-    var currentUrl = window.location.href.split('?')[0];
-    var shareUrl = currentUrl + "?product=" + encodeURIComponent(item.title);
-    var text = "🔥 Check out this amazing deal!\n\n" + item.title + "\nPrice: Rs. " + (item.finalPrice || item.price) + "\n\n" + shareUrl;
-    var url = "";
+    const base = window.location.href.split('?')[0];
+    const shareUrl = base + "?product=" + encodeURIComponent(item.title);
+    const text = "🔥 Check this out!\n\n" + item.title + "\nPrice: Rs. " + (item.finalPrice || item.price) + "\n\n" + shareUrl;
+    let url = "";
     if (platform === 'whatsapp') url = "https://wa.me/?text=" + encodeURIComponent(text);
     else if (platform === 'facebook') url = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(shareUrl);
     else if (platform === 'sms') url = "sms:?&body=" + encodeURIComponent(text);
     if (url) window.open(url, '_blank');
     closeShareModalDirect();
   };
-
   window.copyLink = function() {
-    var shareLink = document.getElementById("shareLink");
-    shareLink.select();
-    shareLink.setSelectionRange(0, 99999);
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareLink.value).catch(function() {
-        document.execCommand("copy");
-      });
-    } else {
-      document.execCommand("copy");
-    }
-    var btn = document.querySelector(".copy-btn");
-    var orig = btn.textContent;
-    btn.textContent = "Copied!";
-    btn.style.background = "#5cb85c";
-    setTimeout(function() {
-      btn.textContent = orig;
-      btn.style.background = "#ef6c00";
-    }, 2000);
+    const shareLink = document.getElementById("shareLink");
+    shareLink.select(); shareLink.setSelectionRange(0, 99999);
+    if (navigator.clipboard) navigator.clipboard.writeText(shareLink.value).catch(() => document.execCommand("copy"));
+    else document.execCommand("copy");
+    const btn = document.querySelector(".copy-btn");
+    const orig = btn.textContent;
+    btn.textContent = "Copied!"; btn.style.background = "#5cb85c";
+    setTimeout(() => { btn.textContent = orig; btn.style.background = "#ef6c00"; }, 2000);
     closeShareModalDirect();
   };
 
@@ -451,8 +314,8 @@ document.addEventListener("DOMContentLoaded", async function() {
   if (!item.id) item.id = (item.title || "product").replace(/\s+/g, "_") + "_" + (item.finalPrice || item.price || "0");
   titleEl.textContent = item.title || "";
 
-  var pd = getPriceData(item);
-  priceEl.innerHTML = 
+  const pd = getPriceData(item);
+  priceEl.innerHTML =
     '<div class="price-wrapper">' +
       '<span class="new-price"><span class="rs">Rs.</span><strong>' + pd.finalPrice + '</strong></span>' +
       (pd.discountAmount > 0 ? '<span class="old-price"><span class="rs">Rs.</span>' + pd.originalPrice + '</span>' : '') +
@@ -462,148 +325,151 @@ document.addEventListener("DOMContentLoaded", async function() {
   function formatDescription(desc) {
     if (!desc) return "";
     desc = desc.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
-    var clean = function(s) { return s.replace(/^[\s\-\*\u2022•]+/, "").replace(/^\d+\.\s*/, "").replace(/\s{2,}/g, " ").trim(); };
-    if (desc.indexOf("•") >= 0 || desc.indexOf("\u2022") >= 0) {
-      var parts = desc.split(/•|\u2022/).map(clean).filter(Boolean);
+    const clean = s => s.replace(/^[\s\-\*\u2022•]+/, "").replace(/^\d+\.\s*/, "").replace(/\s{2,}/g, " ").trim();
+    if (desc.includes("•") || desc.includes("\u2022")) {
+      const parts = desc.split(/•|\u2022/).map(clean).filter(Boolean);
       if (!parts.length) return "";
-      if (parts.length > 1 && parts[0].length < 60 && parts[0].indexOf(":") === -1) {
-        var intro = parts.shift();
-        return "<p>" + intro + "</p><ul>" + parts.map(function(p) { return "<li>" + p + "</li>"; }).join("") + "</ul>";
+      if (parts.length > 1 && parts[0].length < 60 && !parts[0].includes(":")) {
+        const intro = parts.shift();
+        return "<p>" + intro + "</p><ul>" + parts.map(p => "<li>" + p + "</li>").join("") + "</ul>";
       }
-      return "<ul>" + parts.map(function(p) { return "<li>" + p + "</li>"; }).join("") + "</ul>";
+      return "<ul>" + parts.map(p => "<li>" + p + "</li>").join("") + "</ul>";
     }
-    var lines = desc.split("\n").map(clean).filter(Boolean);
+    const lines = desc.split("\n").map(clean).filter(Boolean);
     if (!lines.length) return "";
     if (lines.length === 1) return "<p>" + lines[0] + "</p>";
-    var first = lines[0], rest = lines.slice(1);
-    if (rest.length && first.length < 200 && first.indexOf(":") === -1) {
-      return "<p>" + first + "</p><ul>" + rest.map(function(l) { return "<li>" + l + "</li>"; }).join("") + "</ul>";
-    }
-    return "<ul>" + lines.map(function(l) { return "<li>" + l + "</li>"; }).join("") + "</ul>";
+    const first = lines[0], rest = lines.slice(1);
+    if (rest.length && first.length < 200 && !first.includes(":"))
+      return "<p>" + first + "</p><ul>" + rest.map(l => "<li>" + l + "</li>").join("") + "</ul>";
+    return "<ul>" + lines.map(l => "<li>" + l + "</li>").join("") + "</ul>";
   }
-
   descEl.innerHTML = formatDescription(item.description);
 
   // ═══════════════════════════════════════════════════
-  // MEDIA SLIDER
+  // MEDIA SLIDER (main page - swipe works)
   // ═══════════════════════════════════════════════════
-  var mediaList = [].concat(item.images || [], item.videos || []);
+  const mediaList = [].concat(item.images || [], item.videos || []);
+
+  function isVideo(src) {
+    return typeof src === "string" && /\.(mp4|webm|ogg|mov)$/i.test(src);
+  }
 
   function renderMedia() {
     slider.innerHTML = "";
     dotsContainer.innerHTML = "";
     if (!mediaList.length) {
-      var img = document.createElement("img");
-      img.src = "noimg.png";
-      img.className = "slide active";
-      img.alt = "No image";
-      slider.appendChild(img);
+      const slide = document.createElement("div");
+      slide.className = "slide active";
+      const img = document.createElement("img");
+      img.src = "noimg.png"; img.alt = "No image";
+      slide.appendChild(img); slider.appendChild(slide);
       return;
     }
-    mediaList.forEach(function(media, index) {
-      var el;
-      if (typeof media === "string" && media.toLowerCase().endsWith(".mp4")) {
+    mediaList.forEach((media, index) => {
+      const slide = document.createElement("div");
+      slide.className = "slide" + (index === 0 ? " active" : "");
+      let el;
+      if (isVideo(media)) {
         el = document.createElement("video");
         el.src = media; el.controls = true; el.playsInline = true; el.preload = "metadata";
+        // Video play badge
+        const badge = document.createElement("div");
+        badge.style.cssText = "position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.55);color:#fff;font-size:11px;padding:3px 10px;border-radius:10px;z-index:5;pointer-events:none;backdrop-filter:blur(4px)";
+        badge.textContent = "▶ Video";
+        slide.appendChild(badge);
       } else {
         el = document.createElement("img");
         el.src = media;
-        el.alt = (item.title || 'Product') + " - Image " + (index + 1);
+        el.alt = (item.title || 'Product') + " - " + (index + 1);
         el.loading = index === 0 ? "eager" : "lazy";
       }
-      el.className = "slide" + (index === 0 ? " active" : "");
-      slider.appendChild(el);
+      el.className = "slide-media";
+      slide.appendChild(el);
 
-      var dot = document.createElement("span");
+      // Dot
+      const dot = document.createElement("span");
       dot.className = "dot" + (index === 0 ? " active" : "");
-      dot.onclick = function() { showSlide(index); };
+      dot.onclick = () => showSlide(index);
       dot.setAttribute("role", "button");
       dotsContainer.appendChild(dot);
+
+      slider.appendChild(slide);
     });
+
+    // Counter
+    const counter = document.createElement("div");
+    counter.className = "image-counter";
+    slider.appendChild(counter);
+    updateSliderCounter();
+  }
+
+  function updateSliderCounter() {
+    const counter = slider.querySelector(".image-counter");
+    if (counter) counter.textContent = (currentIndex + 1) + " / " + (mediaList.length || 1);
   }
 
   window.showSlide = function(index) {
-    var slides = slider.querySelectorAll(".slide");
-    var dots = dotsContainer.querySelectorAll(".dot");
+    const slides = slider.querySelectorAll(".slide");
+    const dots = dotsContainer.querySelectorAll(".dot");
     if (!slides.length) return;
     index = (index + slides.length) % slides.length;
-    slides.forEach(function(s) { s.classList.remove("active"); });
-    dots.forEach(function(d) { d.classList.remove("active"); });
+    slides.forEach(s => { s.classList.remove("active"); });
+    dots.forEach(d => { d.classList.remove("active"); });
     slides[index].classList.add("active");
     dots[index].classList.add("active");
     currentIndex = index;
-    updateCounter();
+    updateSliderCounter();
   };
 
-  slider.addEventListener("touchstart", function(e) { startX = e.touches[0].clientX; }, { passive: true });
-  slider.addEventListener("touchend", function(e) {
-    var endX = e.changedTouches[0].clientX;
-    var diff = endX - startX;
-    if (diff > 50) showSlide(currentIndex - 1);
-    else if (diff < -50) showSlide(currentIndex + 1);
+  // Swipe on main slider
+  slider.addEventListener("touchstart", e => { sliderStartX = e.touches[0].clientX; }, { passive: true });
+  slider.addEventListener("touchend", e => {
+    const diff = e.changedTouches[0].clientX - sliderStartX;
+    if (diff > 45) showSlide(currentIndex - 1);
+    else if (diff < -45) showSlide(currentIndex + 1);
   }, { passive: true });
 
   renderMedia();
 
-  var counter = document.createElement("div");
-  counter.className = "image-counter";
-  slider.appendChild(counter);
-
-  function updateCounter() {
-    counter.textContent = (currentIndex + 1) + " / " + (mediaList.length || 1);
-  }
-  updateCounter();
-
   // ═══════════════════════════════════════════════════
   // VARIANTS
   // ═══════════════════════════════════════════════════
-  var variantContainer = document.createElement("div");
+  const variantContainer = document.createElement("div");
   variantContainer.className = "variant-container";
-  var firstSection = document.querySelector(".section");
-  if (firstSection) {
-    document.querySelector(".item-details").insertBefore(variantContainer, firstSection);
-  } else {
-    document.querySelector(".item-details").appendChild(variantContainer);
-  }
+  const firstSection = document.querySelector(".section");
+  if (firstSection) document.querySelector(".item-details").insertBefore(variantContainer, firstSection);
+  else document.querySelector(".item-details").appendChild(variantContainer);
 
-  var colors = Array.isArray(item.color) ? item.color : 
-    (item.color || item.colors ? (item.color || item.colors).toString().split(",").map(function(c) { return c.trim(); }).filter(Boolean) : []);
-  
+  const colors = Array.isArray(item.color) ? item.color
+    : (item.color || item.colors ? (item.color || item.colors).toString().split(",").map(c => c.trim()).filter(Boolean) : []);
   if (colors.length) {
-    var colorDiv = document.createElement("div");
+    const colorDiv = document.createElement("div");
     colorDiv.className = "color-options";
     colorDiv.innerHTML = "<h5>Select Color:</h5>";
-    colors.forEach(function(color) {
-      var btn = document.createElement("button");
-      btn.textContent = color;
-      btn.className = "color-btn";
-      btn.type = "button";
+    colors.forEach(color => {
+      const btn = document.createElement("button");
+      btn.textContent = color; btn.className = "color-btn"; btn.type = "button";
       btn.onclick = function() {
-        colorDiv.querySelectorAll(".color-btn").forEach(function(b) { b.classList.remove("selected"); });
-        btn.classList.add("selected");
-        selectedColor = color;
+        colorDiv.querySelectorAll(".color-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected"); selectedColor = color;
       };
       colorDiv.appendChild(btn);
     });
     variantContainer.appendChild(colorDiv);
   }
 
-  var sizes = Array.isArray(item.size) ? item.size : 
-    (item.size || item.sizes ? (item.size || item.sizes).toString().split(",").map(function(s) { return s.trim(); }).filter(Boolean) : []);
-  
+  const sizes = Array.isArray(item.size) ? item.size
+    : (item.size || item.sizes ? (item.size || item.sizes).toString().split(",").map(s => s.trim()).filter(Boolean) : []);
   if (sizes.length) {
-    var sizeDiv = document.createElement("div");
+    const sizeDiv = document.createElement("div");
     sizeDiv.className = "size-options";
     sizeDiv.innerHTML = "<h5>Select Size:</h5>";
-    sizes.forEach(function(size) {
-      var btn = document.createElement("button");
-      btn.textContent = size;
-      btn.className = "size-btn";
-      btn.type = "button";
+    sizes.forEach(size => {
+      const btn = document.createElement("button");
+      btn.textContent = size; btn.className = "size-btn"; btn.type = "button";
       btn.onclick = function() {
-        sizeDiv.querySelectorAll(".size-btn").forEach(function(b) { b.classList.remove("selected"); });
-        btn.classList.add("selected");
-        selectedSize = size;
+        sizeDiv.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected"); selectedSize = size;
       };
       sizeDiv.appendChild(btn);
     });
@@ -611,41 +477,30 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 
   // ═══════════════════════════════════════════════════
-  // SUPPLIER INFO
+  // SUPPLIER
   // ═══════════════════════════════════════════════════
   async function loadSupplierInfo(sellerPhone) {
     if (!sellerPhone) {
       supplierContainer.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">Seller info not available</p>';
       return;
     }
-    var sellerName = "Unknown Seller";
-    var sellerLogo = "lo.png";
+    let sellerName = "Unknown Seller", sellerLogo = "lo.png";
     try {
-      var res = await fetch(API_BASE + "/all-stores");
-      var stores = await res.json();
-      var norm = function(p) { return p ? p.toString().replace(/\D/g, "") : ""; };
-      var sp = norm(sellerPhone);
-      var seller = stores.find(function(s) { return s.phone === sellerPhone; });
-      if (!seller) seller = stores.find(function(s) { return norm(s.phone) === sp; });
-      if (!seller) {
-        seller = stores.find(function(s) {
-          var sn = norm(s.phone);
-          return sn && sp && (sn.endsWith(sp) || sp.endsWith(sn));
-        });
-      }
+      const res = await fetch(API_BASE + "/all-stores");
+      const stores = await res.json();
+      const norm = p => p ? p.toString().replace(/\D/g, "") : "";
+      const sp = norm(sellerPhone);
+      let seller = stores.find(s => s.phone === sellerPhone);
+      if (!seller) seller = stores.find(s => norm(s.phone) === sp);
+      if (!seller) seller = stores.find(s => { const sn = norm(s.phone); return sn && sp && (sn.endsWith(sp) || sp.endsWith(sn)); });
       if (seller) {
         sellerName = seller.name || sellerName;
         sellerLogo = seller.logo || sellerLogo;
-        if (seller.delivery) {
-          item.delivery = seller.delivery;
-          localStorage.setItem("selectedItem", JSON.stringify(item));
-        }
+        if (seller.delivery) { item.delivery = seller.delivery; localStorage.setItem("selectedItem", JSON.stringify(item)); }
       }
-    } catch (err) {
-      console.warn("Supplier load error:", err);
-    }
+    } catch (err) { console.warn("Supplier load error:", err); }
 
-    supplierContainer.innerHTML = 
+    supplierContainer.innerHTML =
       '<div class="supplier-info">' +
         '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">' +
           '<img src="' + sellerLogo + '" class="supplier-logo" onerror="this.src=\'lo.png\'">' +
@@ -653,181 +508,328 @@ document.addEventListener("DOMContentLoaded", async function() {
         '</div>' +
         '<button id="viewSupplierBtn" class="view-supplier-btn">View Shop</button>' +
       '</div>';
-    
-    var btn = supplierContainer.querySelector("#viewSupplierBtn");
-    if (btn) {
-      btn.onclick = function() {
-        window.location.href = "Store.html?phone=" + encodeURIComponent(item.sellerPhone);
-      };
-    }
+    const btn = supplierContainer.querySelector("#viewSupplierBtn");
+    if (btn) btn.onclick = () => { window.location.href = "Store.html?phone=" + encodeURIComponent(item.sellerPhone); };
   }
 
   // ═══════════════════════════════════════════════════
-  // FULLSCREEN VIEWER
+  // FULLSCREEN VIEWER — Pinch Zoom + Swipe + Video
   // ═══════════════════════════════════════════════════
-  var fullscreenMediaList = [];
-  var fullscreenCurrentIndex = 0;
+  let fsMediaList = [];
+  let fsIndex = 0;
+
+  // Zoom state
+  let fsScale = 1;
+  let fsLastScale = 1;
+  let fsDragX = 0, fsDragY = 0;
+  let fsLastX = 0, fsLastY = 0;
+  let fsPinchDist = 0;
+  let fsIsDragging = false;
+  let fsTouchCount = 0;
+  let fsSwipeStartX = 0;
+
+  const MIN_SCALE = 1, MAX_SCALE = 5;
+
+  function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+  function buildFsMedia() {
+    // Build from main slider slides (images + videos)
+    fsMediaList = [];
+    document.querySelectorAll("#imageSlider .slide").forEach((slide, i) => {
+      const vid = slide.querySelector("video");
+      const img = slide.querySelector("img");
+      if (vid) fsMediaList.push({ type: "video", src: vid.src });
+      else if (img) fsMediaList.push({ type: "image", src: img.src });
+    });
+    // Fallback: use mediaList directly
+    if (!fsMediaList.length) {
+      mediaList.forEach(m => fsMediaList.push(isVideo(m) ? { type:"video", src:m } : { type:"image", src:m }));
+    }
+  }
+
+  function renderFsMedia(direction) {
+    const container = document.getElementById("fullscreenImageContainer");
+    if (!container || !fsMediaList.length) return;
+    const media = fsMediaList[fsIndex];
+
+    // Reset zoom
+    fsScale = 1; fsDragX = 0; fsDragY = 0;
+
+    // Remove previous hint
+    const oldHint = document.getElementById("zoomHint");
+    if (oldHint) { oldHint.style.display = "none"; }
+
+    if (media.type === "video") {
+      container.innerHTML =
+        '<video src="' + media.src + '" controls playsinline preload="metadata" ' +
+        'style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;outline:none;"></video>' +
+        '<div class="video-badge">▶ Video</div>';
+    } else {
+      const img = document.createElement("img");
+      img.src = media.src;
+      img.draggable = false;
+      container.innerHTML = "";
+      container.appendChild(img);
+
+      // Add direction animation
+      if (direction) {
+        img.classList.add(direction === 1 ? "fs-enter-right" : "fs-enter-left");
+        img.addEventListener("animationend", () => { img.classList.remove("fs-enter-right","fs-enter-left"); }, { once: true });
+      }
+
+      // Show hint once
+      const hint = document.getElementById("zoomHint");
+      if (hint) {
+        hint.style.display = "";
+        hint.style.animation = "none";
+        void hint.offsetWidth;
+        hint.style.animation = "";
+      }
+
+      setupFsZoom(img);
+    }
+
+    updateFsDots();
+    updateFsCounter();
+  }
+
+  function setupFsZoom(img) {
+    const container = document.getElementById("fullscreenImageContainer");
+    if (!container || !img) return;
+
+    function getTransform() {
+      return `translate(${fsDragX}px, ${fsDragY}px) scale(${fsScale})`;
+    }
+
+    function applyTransform(smooth) {
+      img.style.transition = smooth ? "transform 0.2s ease" : "none";
+      img.style.transform = getTransform();
+    }
+
+    function clampDrag() {
+      if (fsScale <= 1) { fsDragX = 0; fsDragY = 0; return; }
+      const maxX = (img.offsetWidth * (fsScale - 1)) / 2;
+      const maxY = (img.offsetHeight * (fsScale - 1)) / 2;
+      fsDragX = clamp(fsDragX, -maxX, maxX);
+      fsDragY = clamp(fsDragY, -maxY, maxY);
+    }
+
+    container.addEventListener("touchstart", onTouchStart, { passive: false });
+    container.addEventListener("touchmove", onTouchMove, { passive: false });
+    container.addEventListener("touchend", onTouchEnd, { passive: false });
+    container.addEventListener("dblclick", onDblClick);
+
+    // Cleanup on next render
+    img._cleanup = () => {
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("dblclick", onDblClick);
+    };
+
+    function getTouchDist(t1, t2) {
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    function onTouchStart(e) {
+      fsTouchCount = e.touches.length;
+      fsIsDragging = false;
+
+      if (e.touches.length === 2) {
+        // Pinch start
+        e.preventDefault();
+        fsPinchDist = getTouchDist(e.touches[0], e.touches[1]);
+        fsLastScale = fsScale;
+      } else if (e.touches.length === 1) {
+        fsSwipeStartX = e.touches[0].clientX;
+        fsLastX = e.touches[0].clientX;
+        fsLastY = e.touches[0].clientY;
+        fsDragX = fsDragX;
+        fsDragY = fsDragY;
+      }
+    }
+
+    function onTouchMove(e) {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dist = getTouchDist(e.touches[0], e.touches[1]);
+        const newScale = clamp(fsLastScale * (dist / fsPinchDist), MIN_SCALE, MAX_SCALE);
+        fsScale = newScale;
+        clampDrag();
+        applyTransform(false);
+        fsIsDragging = true;
+      } else if (e.touches.length === 1) {
+        if (fsScale > 1) {
+          // Pan mode when zoomed
+          e.preventDefault();
+          const dx = e.touches[0].clientX - fsLastX;
+          const dy = e.touches[0].clientY - fsLastY;
+          fsDragX += dx; fsDragY += dy;
+          fsLastX = e.touches[0].clientX;
+          fsLastY = e.touches[0].clientY;
+          clampDrag();
+          applyTransform(false);
+          fsIsDragging = true;
+        }
+        // If scale=1, don't preventDefault — allow swipe detection in touchend
+      }
+    }
+
+    function onTouchEnd(e) {
+      if (fsTouchCount === 1 && fsScale <= 1 && !fsIsDragging) {
+        const endX = e.changedTouches[0].clientX;
+        const diff = endX - fsSwipeStartX;
+        if (diff > 50) changeFullscreenImage(-1);
+        else if (diff < -50) changeFullscreenImage(1);
+      }
+      // Snap scale to 1 if very close
+      if (fsScale < 1.05) {
+        fsScale = 1; fsDragX = 0; fsDragY = 0;
+        applyTransform(true);
+      }
+      fsTouchCount = 0;
+    }
+
+    function onDblClick(e) {
+      if (fsScale > 1) {
+        fsScale = 1; fsDragX = 0; fsDragY = 0;
+      } else {
+        fsScale = 2.5;
+        // Center on tap point
+        const rect = container.getBoundingClientRect();
+        const tapX = e.clientX - rect.left - rect.width / 2;
+        const tapY = e.clientY - rect.top - rect.height / 2;
+        fsDragX = -tapX * (fsScale - 1) / fsScale;
+        fsDragY = -tapY * (fsScale - 1) / fsScale;
+        clampDrag();
+      }
+      applyTransform(true);
+    }
+  }
 
   window.openFullscreenViewer = function() {
-    var viewer = document.getElementById("fullscreenViewer");
-    var slides = document.querySelectorAll("#imageSlider .slide");
-    fullscreenMediaList = [];
-    slides.forEach(function(slide) {
-      if (slide.tagName === 'IMG') fullscreenMediaList.push({ type: 'image', src: slide.src });
-    });
-    if (!fullscreenMediaList.length) return;
-    fullscreenCurrentIndex = currentIndex || 0;
-    updateFullscreenImage();
-    updateFullscreenDots();
-    updateFullscreenCounter();
+    buildFsMedia();
+    if (!fsMediaList.length) return;
+    fsIndex = currentIndex || 0;
+    if (fsIndex >= fsMediaList.length) fsIndex = 0;
+    const viewer = document.getElementById("fullscreenViewer");
+    renderFsMedia(null);
     viewer.classList.add("active");
     document.body.style.overflow = "hidden";
   };
 
   window.openFullscreenViewerFromSrc = function(src) {
-    fullscreenMediaList = [{ type: 'image', src: src }];
-    fullscreenCurrentIndex = 0;
-    var viewer = document.getElementById("fullscreenViewer");
-    updateFullscreenImage();
-    updateFullscreenDots();
-    updateFullscreenCounter();
+    fsMediaList = [{ type: isVideo(src) ? "video" : "image", src }];
+    fsIndex = 0;
+    const viewer = document.getElementById("fullscreenViewer");
+    renderFsMedia(null);
     viewer.classList.add("active");
     document.body.style.overflow = "hidden";
   };
 
   window.closeFullscreenViewer = function() {
-    var viewer = document.getElementById("fullscreenViewer");
+    const viewer = document.getElementById("fullscreenViewer");
+    // Pause any video
+    const vid = viewer.querySelector("video");
+    if (vid) vid.pause();
     viewer.classList.remove("active");
     document.body.style.overflow = "";
+    // Cleanup zoom listeners
+    const img = viewer.querySelector("img");
+    if (img && img._cleanup) img._cleanup();
   };
 
   window.changeFullscreenImage = function(direction) {
-    var img = document.getElementById("fullscreenImage");
-    if (!img) return;
-    fullscreenCurrentIndex = (fullscreenCurrentIndex + direction + fullscreenMediaList.length) % fullscreenMediaList.length;
-    updateFullscreenImage();
-    updateFullscreenDots();
-    updateFullscreenCounter();
+    if (fsMediaList.length <= 1) return;
+    // Cleanup old zoom
+    const img = document.querySelector("#fullscreenImageContainer img");
+    if (img && img._cleanup) img._cleanup();
+    // Pause any video
+    const vid = document.querySelector("#fullscreenImageContainer video");
+    if (vid) vid.pause();
+    fsIndex = (fsIndex + direction + fsMediaList.length) % fsMediaList.length;
+    renderFsMedia(direction);
   };
 
-  function updateFullscreenImage() {
-    var img = document.getElementById("fullscreenImage");
-    var media = fullscreenMediaList[fullscreenCurrentIndex];
-    if (media && media.type === 'image') {
-      img.src = media.src;
-      img.style.display = 'block';
-    }
-  }
-
-  function updateFullscreenDots() {
-    var dotsContainer = document.getElementById("fullscreenDots");
-    dotsContainer.innerHTML = "";
-    fullscreenMediaList.forEach(function(_, index) {
-      var dot = document.createElement("span");
-      dot.className = "fullscreen-dot" + (index === fullscreenCurrentIndex ? " active" : "");
-      dot.onclick = function() {
-        fullscreenCurrentIndex = index;
-        updateFullscreenImage();
-        updateFullscreenDots();
-        updateFullscreenCounter();
+  function updateFsDots() {
+    const dotsDiv = document.getElementById("fullscreenDots");
+    if (!dotsDiv) return;
+    dotsDiv.innerHTML = "";
+    fsMediaList.forEach((m, i) => {
+      const dot = document.createElement("span");
+      dot.className = "fullscreen-dot" + (i === fsIndex ? " active" : "") + (m.type === "video" ? " video-dot" : "");
+      dot.onclick = () => {
+        const d = i > fsIndex ? 1 : -1;
+        const img = document.querySelector("#fullscreenImageContainer img");
+        if (img && img._cleanup) img._cleanup();
+        fsIndex = i;
+        renderFsMedia(d);
       };
       dot.setAttribute("role", "button");
-      dotsContainer.appendChild(dot);
+      dotsDiv.appendChild(dot);
     });
   }
 
-  function updateFullscreenCounter() {
-    document.getElementById("fullscreenCounter").textContent = (fullscreenCurrentIndex + 1) + " / " + fullscreenMediaList.length;
+  function updateFsCounter() {
+    const el = document.getElementById("fullscreenCounter");
+    if (el) el.textContent = (fsIndex + 1) + " / " + fsMediaList.length;
   }
 
   // ═══════════════════════════════════════════════════
-  // DELIGHT CHAT BUTTON
+  // CHAT BUTTON
   // ═══════════════════════════════════════════════════
-  function setupChatButton() {
-    var chatAnchor = document.querySelector(".whatsapp-btn a");
-    if (!chatAnchor) return
-    
-    chatAnchor.removeAttribute("href");
-    chatAnchor.onclick = function(e) {
-      e.preventDefault();
-      openDelightChat();
-    };
-  }
-
   window.openDelightChat = function() {
-    var customer = JSON.parse(localStorage.getItem("customer"));
-    if (!customer) {
-      alert("Please login to chat with seller");
-      window.location.href = "login.html";
-      return;
-    }
-
-    if (!item || !item.sellerPhone) {
-      alert("Seller information not available");
-      return;
-    }
-
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (!customer) { alert("Please login to chat with seller"); window.location.href = "login.html"; return; }
+    if (!item || !item.sellerPhone) { alert("Seller information not available"); return; }
     localStorage.setItem("selectedItem", JSON.stringify(item));
     window.location.href = "Delight Chat.html?product=" + encodeURIComponent(item.title) + "&seller=" + encodeURIComponent(item.sellerPhone);
-  };  // ═══════════════════════════════════════════════════
+  };
+
+  // ═══════════════════════════════════════════════════
   // SIMILAR ITEMS
   // ═══════════════════════════════════════════════════
   async function loadSimilarItems(currentItem) {
-    var container = document.getElementById("itemContainer");
-    container.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">Loading...</div>';
-    
-    var backendItems = [];
-    try {
-      var res = await fetch(API_BASE + "/products");
-      if (res.ok) backendItems = await res.json();
-    } catch (err) {}
-    
-    var merged = [];
-    (window.items || []).forEach(function(i) { merged.push(i); });
-    backendItems.forEach(function(b) {
-      var exists = merged.find(function(m) { return (m.title || "").toLowerCase() === (b.title || "").toLowerCase(); });
-      if (!exists) merged.push(b);
-    });
-    
-    var similar = merged.filter(function(p) {
-      if ((p.title || "").toLowerCase() === (currentItem.title || "").toLowerCase()) return false;
-      var cc = (currentItem.category || "").toLowerCase();
-      var pc = (p.category || "").toLowerCase();
-      var ct = (currentItem.title || "").toLowerCase();
-      var pt = (p.title || "").toLowerCase();
-      return (cc && pc && cc === pc) || ct.split(/\s+/).filter(function(w) { return w.length > 2; }).some(function(w) { return pt.indexOf(w) >= 0; });
+    itemContainer.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">Loading...</div>';
+    let backendItems = [];
+    try { const res = await fetch(API_BASE + "/products"); if (res.ok) backendItems = await res.json(); } catch (err) {}
+    const merged = [];
+    (window.items || []).forEach(i => merged.push(i));
+    backendItems.forEach(b => { if (!merged.find(m => (m.title||"").toLowerCase() === (b.title||"").toLowerCase())) merged.push(b); });
+    const similar = merged.filter(p => {
+      if ((p.title||"").toLowerCase() === (currentItem.title||"").toLowerCase()) return false;
+      const cc = (currentItem.category||"").toLowerCase(), pc = (p.category||"").toLowerCase();
+      const ct = (currentItem.title||"").toLowerCase(), pt = (p.title||"").toLowerCase();
+      return (cc && pc && cc === pc) || ct.split(/\s+/).filter(w => w.length > 2).some(w => pt.includes(w));
     }).slice(0, 10);
-    
-    container.innerHTML = "";
-    if (!similar.length) {
-      container.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">No similar items</div>';
-      return;
-    }
-    
-    similar.forEach(function(i) {
-      var basePrice = parseInt((i.price || "0").toString().replace(/[^\d]/g, "")) || 0;
-      var discountAmount = parseInt((i.discount || "0").toString().replace(/[^\d]/g, "")) || 0;
-      var finalPrice = basePrice - discountAmount;
-      var imgSrc = i.images?.[0] || i.image || "noimg.png";
-      
-      var card = document.createElement("div");
+
+    itemContainer.innerHTML = "";
+    if (!similar.length) { itemContainer.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">No similar items</div>'; return; }
+
+    similar.forEach(i => {
+      const basePrice = parseInt((i.price||"0").toString().replace(/[^\d]/g,"")) || 0;
+      const disc = parseInt((i.discount||"0").toString().replace(/[^\d]/g,"")) || 0;
+      const finalPrice = basePrice - disc;
+      const imgSrc = i.images?.[0] || i.image || "noimg.png";
+      const card = document.createElement("div");
       card.className = "item-card";
-      card.innerHTML = 
+      card.innerHTML =
         '<img src="' + imgSrc + '" loading="lazy" onerror="this.src=\'noimg.png\'">' +
         '<h3>' + i.title + '</h3>' +
         '<p class="price-wrapper">' +
           '<span class="new-price"><span class="rs">Rs.</span><strong>' + finalPrice + '</strong></span>' +
-          (discountAmount > 0 ? '<span class="old-price"><span class="rs">Rs.</span>' + basePrice + '</span>' : '') +
+          (disc > 0 ? '<span class="old-price"><span class="rs">Rs.</span>' + basePrice + '</span>' : '') +
         '</p>';
-      
-      card.onclick = function() {
+      card.onclick = () => {
         localStorage.setItem("selectedItem", JSON.stringify({
-          ...i, finalPrice, originalPrice: basePrice, discountAmount,
-          discountPercentage: basePrice > 0 ? Math.round((discountAmount / basePrice) * 100) : 0
+          ...i, finalPrice, originalPrice: basePrice, discountAmount: disc,
+          discountPercentage: basePrice > 0 ? Math.round((disc/basePrice)*100) : 0
         }));
         window.location.href = "itemDetails.html";
       };
-      container.appendChild(card);
+      itemContainer.appendChild(card);
     });
   }
 
@@ -835,8 +837,8 @@ document.addEventListener("DOMContentLoaded", async function() {
   // CART
   // ═══════════════════════════════════════════════════
   function updateCartCount() {
-    var cart = JSON.parse(localStorage.getItem("cart")) || [];
-    var total = cart.reduce(function(sum, it) { return sum + (it.quantity || 0); }, 0);
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const total = cart.reduce((s, it) => s + (it.quantity || 0), 0);
     cartCountEl.textContent = total;
     cartCountEl.style.display = total > 0 ? "inline" : "none";
   }
@@ -844,81 +846,50 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   window.addToCart = function(event) {
     if (!item) return;
-    if (!item.id) item.id = (item.title || "product").replace(/\s+/g, "_") + "_" + (item.finalPrice || item.price || "0");
-    var cart = JSON.parse(localStorage.getItem("cart")) || [];
-    var fp = getPriceData(item).finalPrice;
-    var existing = cart.find(function(p) { return p.id === item.id; });
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      cart.push({
-        id: item.id, title: item.title, price: fp,
-        image: item.images ? item.images[0] : item.image,
-        quantity: 1, description: item.description || "",
-        sellerPhone: item.sellerPhone || "", delivery: item.delivery || 0,
-        selectedColor, selectedSize
-      });
-    }
+    if (!item.id) item.id = (item.title||"product").replace(/\s+/g,"_") + "_" + (item.finalPrice||item.price||"0");
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const fp = getPriceData(item).finalPrice;
+    const existing = cart.find(p => p.id === item.id);
+    if (existing) existing.quantity += 1;
+    else cart.push({ id: item.id, title: item.title, price: fp, image: item.images?.[0] || item.image, quantity: 1, description: item.description||"", sellerPhone: item.sellerPhone||"", delivery: item.delivery||0, selectedColor, selectedSize });
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
     animateFlyToCart(event);
   };
 
   window.goToOrderPage = function() {
-    var pd = getPriceData(item);
-    localStorage.setItem("orderProduct", JSON.stringify({
-      title: item.title, image: item.images ? item.images[0] : item.image,
-      selectedColor, selectedSize, originalPrice: pd.originalPrice,
-      finalPrice: pd.finalPrice, discountPercentage: pd.discountPercentage,
-      description: item.description || "", sellerPhone: item.sellerPhone || "",
-      delivery: item.delivery || 0, productId: item.id || Date.now()
-    }));
+    const pd = getPriceData(item);
+    localStorage.setItem("orderProduct", JSON.stringify({ title: item.title, image: item.images?.[0]||item.image, selectedColor, selectedSize, originalPrice: pd.originalPrice, finalPrice: pd.finalPrice, discountPercentage: pd.discountPercentage, description: item.description||"", sellerPhone: item.sellerPhone||"", delivery: item.delivery||0, productId: item.id||Date.now() }));
     window.location.href = "order.html";
   };
 
-  window.goToCart = function() {
-    window.location.href = "cart.html";
-  };
+  window.goToCart = () => { window.location.href = "cart.html"; };
 
   function animateFlyToCart(e) {
     try {
-      var imgSrc = item.images ? item.images[0] : item.image || "noimg.png";
-      var flyImg = document.createElement("img");
+      const imgSrc = item.images?.[0] || item.image || "noimg.png";
+      const flyImg = document.createElement("img");
       flyImg.src = imgSrc;
       flyImg.style.cssText = "position:fixed;z-index:9999;width:60px;height:60px;object-fit:cover;border-radius:50%;pointer-events:none;";
       document.body.appendChild(flyImg);
-      
-      var start = e.target.getBoundingClientRect();
-      var cartIcon = document.querySelector(".cart-bag").getBoundingClientRect();
-      
+      const start = e.target.getBoundingClientRect();
+      const cartIcon = document.querySelector(".cart-bag").getBoundingClientRect();
       flyImg.style.left = (start.left + start.width/2 - 30) + "px";
-      flyImg.style.top = (start.top + start.height/2 - 30) + "px";
-      
-      requestAnimationFrame(function() {
-        flyImg.style.transition = "transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.7s ease";
-        flyImg.style.transform = "translate(" + (cartIcon.left - start.left) + "px, " + (cartIcon.top - start.top) + "px) scale(0.1)";
+      flyImg.style.top  = (start.top + start.height/2 - 30) + "px";
+      requestAnimationFrame(() => {
+        flyImg.style.transition = "transform 0.7s cubic-bezier(0.2,0.8,0.2,1), opacity 0.7s ease";
+        flyImg.style.transform = `translate(${cartIcon.left - start.left}px, ${cartIcon.top - start.top}px) scale(0.1)`;
         flyImg.style.opacity = "0";
       });
-      setTimeout(function() { flyImg.remove(); }, 750);
+      setTimeout(() => flyImg.remove(), 750);
     } catch (err) {}
   }
 
-  // ═══════════════════════════════════════════════════
-  // TOGGLE SECTION
-  // ═══════════════════════════════════════════════════
-  window.toggleSection = function(element) {
-    element.parentElement.classList.toggle("open");
-  };
+  window.toggleSection = el => el.parentElement.classList.toggle("open");
 
-  // ═══════════════════════════════════════════════════
-  // INIT
-  // ═══════════════════════════════════════════════════
+  // ── INIT ──
   loadSupplierInfo(item.sellerPhone);
-  setupChatButton();
   loadSimilarItems(item);
-  setupStarClicks(); // ← IMPORTANT: Setup star clicks
-  
-  if (item.id) {
-    loadRatingAndReviews();
-  }
+  setupStarClicks();
+  if (item.id) loadRatingAndReviews();
 });
