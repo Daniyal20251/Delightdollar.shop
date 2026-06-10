@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff6b00">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DelightPK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
   <title>Terms & Conditions - Delight.pk</title>
+</head>
   <style>
     body { font-family: sans-serif; padding: 20px; background: #f9f9f9; margin-top:50px;}
     h1 { color: #ff6c00; }
@@ -53,7 +61,6 @@ header h4 {
   line-height: 65px;
 }
   </style>
-</head>
 <body>
   <header>
   <div class="back-btn" onclick="history.back()">
@@ -63,5 +70,11 @@ header h4 {
 </header>
   <h1>Terms & Conditions</h1>
   <p>By using Delight.pk powered by Woo-Commerce Web, you agree to our terms. All products are sold as per availability. Prices may change without prior notice. Orders are processed only after payment confirmation.</p>
+  
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>

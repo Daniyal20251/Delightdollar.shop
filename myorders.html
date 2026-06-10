@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#ff6b00">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DelightPK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <title>Delight PK - My Orders</title>
+</head>
 <style>
 body {
   margin: 0;
@@ -143,7 +151,6 @@ header h4 {
 #loading { text-align: center; color: #666; margin-top: 50px; font-weight: 500; }
 .small-muted { font-size: 12px; color: #666; margin-top:6px; }
 </style>
-</head>
 <body>
 
 <header>
@@ -271,6 +278,10 @@ async function loadOrders(){
 
 window.onload = loadOrders;
 </script>
-
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>

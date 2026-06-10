@@ -1,11 +1,19 @@
 <!DOCTYPE html>  
 <html lang="en">  
-<head>  
+<head>
   <meta charset="UTF-8">  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <title>Category</title>  
   <link rel="stylesheet" href="Home.css"> 
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+   <meta name="theme-color" content="#ff6b00">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DelightPK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+</head>
   <style>
     body {
       margin: 0;
@@ -83,7 +91,6 @@
       font-weight: 500;
     }
   </style>
-</head>  
 <body>  
   
   <!-- 🔹 Top Header -->  
@@ -100,6 +107,11 @@
   <!-- 🔹 Loading -->  
   <div class="loading" id="loading">Loading...</div>  
   
-  <script src="CategoryResult.js"></script>  
+  <script src="CategoryResult.js"></script>
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>  
 </html>

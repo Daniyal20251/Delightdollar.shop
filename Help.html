@@ -4,7 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Help Center - Delight.pk</title>
-
+  <meta name="theme-color" content="#ff6b00">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DelightPK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+</head>
   <style>
     body {
   margin: 0;
@@ -106,7 +113,6 @@ header h4 {
       transform: scale(0.97);
     }
   </style>
-</head>
 
 <body>
 <header>
@@ -166,6 +172,10 @@ header h4 {
   </a>
 </div>
 </div>
-
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>

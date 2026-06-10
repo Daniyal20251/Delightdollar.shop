@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ff6b00">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DelightPK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <title>www.delight.pk - Cart Order</title>
+</head>
 <style>
 body { font-family: 'Segoe UI', sans-serif; max-width: 480px; margin: auto; padding: 20px; background-color: #fdfdfd; color: #333; }
 h2 { text-align: center; margin-bottom: 20px; color: #ef6c00; }
@@ -18,7 +26,6 @@ button:hover { background-color: #d65c00; }
 .total-box { background-color: #fff3e0; border: 1px solid #ef6c00; border-radius: 10px; padding: 12px; font-weight: bold; margin-top: 15px; text-align:right; }
 .description { font-size: 13px; color: #555; margin-top: 4px; }
 </style>
-</head>
 <body>
 
 <h2>🛒 Place Your Order</h2>
@@ -152,6 +159,10 @@ async function handleSubmit(event){
   window.location.href = "thanks.html";
 }
 </script>
-
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>

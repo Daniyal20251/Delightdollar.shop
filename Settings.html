@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
   <title>Settings - Delight.pk</title>
-
+</head>
   <style>
     body {
   margin: 0;
@@ -96,8 +97,6 @@ header h4 {
       transform: scale(0.96);
     }
   </style>
-</head>
-
 <body>
 <header>
   <div class="back-btn" onclick="history.back()">
@@ -140,6 +139,11 @@ header h4 {
     localStorage.removeItem("customer");
     window.location.href = "profile.html";
   }
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
 </script>
 
 </body>
