@@ -1,80 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delightpk - Online Shopping in Pakistan | Fashion, Electronics & More</title>
-  <meta name="description" content="Discover a wide range of products on Delightpk — from fashion and electronics to home essentials. Fast delivery, secure payments, and easy returns across Pakistan.">
-  <meta name="keywords" content="Delightpk, online shopping Pakistan, buy online Pakistan, fashion, electronics, home essentials, online store Pakistan">
+
+  <!-- ===== PRIMARY SEO ===== -->
+  <title>Delightpk - Online Shopping in Pakistan | Fashion, Electronics & Home Essentials</title>
+  <meta name="description" content="Shop online in Pakistan at Delightpk. Best deals on fashion, electronics, home essentials, watches, earbuds & more. Fast delivery, secure payments & easy returns across Pakistan.">
+  <meta name="keywords" content="online shopping Pakistan, buy online Pakistan, Delightpk, fashion Pakistan, electronics Pakistan, home essentials Pakistan, smart watch Pakistan, earbuds Pakistan, power bank Pakistan, tripod stand Pakistan, wall clock Pakistan, online store Pakistan, best deals Pakistan, fast delivery Pakistan, daraz alternative Pakistan">
   <meta name="author" content="Delightpk">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="3 days">
+  <meta name="rating" content="general">
+  <meta name="geo.region" content="PK">
+  <meta name="geo.country" content="Pakistan">
+  <meta name="target" content="all">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+
+  <!-- ===== CANONICAL ===== -->
   <link rel="canonical" href="https://delightpk.shop/">
+
+  <!-- ===== FAVICON & ICONS ===== -->
   <link rel="icon" href="https://delightpk.shop/Delightpk.png" type="image/png">
-  <link rel="apple-touch-icon" href="https://delightpk.shop/Delightpk.png">
+  <link rel="shortcut icon" href="https://delightpk.shop/Delightpk.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="/icon-192.png">
+
+  <!-- ===== PRECONNECT (Performance) ===== -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- ===== FONTS & STYLES ===== -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Home.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Open Graph -->
+
+  <!-- ===== OPEN GRAPH (Facebook/WhatsApp) ===== -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://delightpk.shop/">
-  <meta property="og:title" content="Delightpk - Online Shopping in Pakistan">
-  <meta property="og:description" content="Shop fashion, electronics, and home essentials online in Pakistan. Fast delivery and secure checkout.">
+  <meta property="og:title" content="Delightpk - Best Online Shopping in Pakistan">
+  <meta property="og:description" content="Discover amazing deals on fashion, electronics & home essentials. Fast delivery across Pakistan. Shop now at Delightpk!">
   <meta property="og:image" content="https://delightpk.shop/Delightpk.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Delightpk - Online Shopping Pakistan">
   <meta property="og:site_name" content="Delightpk">
-  
-  <!-- Twitter -->
+  <meta property="og:locale" content="en_PK">
+
+  <!-- ===== TWITTER CARD ===== -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Delightpk - Online Shopping in Pakistan">
-  <meta name="twitter:description" content="Find products you love with fast delivery across Pakistan.">
+  <meta name="twitter:site" content="@delightpk">
+  <meta name="twitter:creator" content="@delightpk">
+  <meta name="twitter:title" content="Delightpk - Best Online Shopping in Pakistan">
+  <meta name="twitter:description" content="Shop fashion, electronics & home essentials online. Fast delivery & secure checkout. Best prices in Pakistan!">
   <meta name="twitter:image" content="https://delightpk.shop/Delightpk.png">
-  
+  <meta name="twitter:image:alt" content="Delightpk Online Store Pakistan">
+
+  <!-- ===== PWA ===== -->
   <meta name="theme-color" content="#ff6b00">
-  
-  <!-- Schema: Website -->
+  <meta name="application-name" content="Delightpk">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Delightpk">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- ===== SCHEMA: WebSite ===== -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Delightpk",
+    "alternateName": "Delight PK",
     "url": "https://delightpk.shop/",
+    "description": "Online shopping in Pakistan — fashion, electronics, home essentials and more.",
+    "inLanguage": "en-PK",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://delightpk.shop/search?q={search_term_string}",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://delightpk.shop/search?q={search_term_string}"
+      },
       "query-input": "required name=search_term_string"
     }
   }
   </script>
-  
-  <!-- Schema: Organization -->
+
+  <!-- ===== SCHEMA: Organization ===== -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Delightpk",
+    "legalName": "Delightpk",
     "url": "https://delightpk.shop/",
-    "logo": "https://delightpk.shop/Delightpk.png",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://delightpk.shop/Delightpk.png",
+      "width": 512,
+      "height": 512
+    },
+    "image": "https://delightpk.shop/Delightpk.png",
+    "description": "Delightpk is Pakistan's growing online shopping store offering fashion, electronics, home essentials and more with fast delivery nationwide.",
+    "foundingDate": "2024",
+    "areaServed": { "@type": "Country", "name": "Pakistan" },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+92-326-2909451",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Urdu"],
+      "areaServed": "PK"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "PK",
+      "addressLocality": "Karachi",
+      "streetAddress": "R3M8+6CQ Defence Housing Authority"
+    },
+    "email": "info@delightpk.com",
     "sameAs": [
       "https://facebook.com/delightpk",
-      "https://instagram.com/delightpk"
+      "https://instagram.com/delightpk",
+      "https://twitter.com/delightpk",
+      "https://youtube.com/delightpk",
+      "https://delightpk.com"
     ]
   }
   </script>
+
+  <!-- ===== SCHEMA: OnlineStore ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "name": "Delightpk",
+    "url": "https://delightpk.shop/",
+    "image": "https://delightpk.shop/Delightpk.png",
+    "description": "Buy online in Pakistan — fashion, electronics, watches, earbuds, home essentials with fast delivery.",
+    "priceRange": "PKR",
+    "currenciesAccepted": "PKR",
+    "paymentAccepted": "Cash on Delivery, Online Payment",
+    "areaServed": "Pakistan",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Delightpk Products",
+      "itemListElement": [
+        {"@type": "OfferCatalog", "name": "Fashion"},
+        {"@type": "OfferCatalog", "name": "Electronics"},
+        {"@type": "OfferCatalog", "name": "Home Essentials"},
+        {"@type": "OfferCatalog", "name": "Smart Watches"},
+        {"@type": "OfferCatalog", "name": "Earbuds"},
+        {"@type": "OfferCatalog", "name": "Power Banks"}
+      ]
+    }
+  }
+  </script>
+
+  <!-- ===== SCHEMA: BreadcrumbList ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://delightpk.shop/"
+      }
+    ]
+  }
+  </script>
+
 </head>
 <body>
 
   <!-- ===== HEADER ===== -->
-  <header class="main-header">
+  <header class="main-header" role="banner" aria-label="Delightpk Header">
     <div class="header-left">
       <div class="logo-wrap">
-        <img src="Delight icons/Delightpk.png" width="36" height="36" alt="logo">
+        <img src="Delight icons/Delightpk.png" width="36" height="36" alt="Delightpk - Online Shopping Pakistan" fetchpriority="high">
       </div>
-      <h1 class="brand-name">Delight<span>pk</span></h1>
+      <a href="/" class="brand-link" aria-label="Delightpk Home">
+        <h1 class="brand-name">Delight<span>pk</span></h1>
+      </a>
     </div>
     <div class="header-right">
       <div class="search-wrap" id="searchWrap">
@@ -120,20 +237,20 @@
   </div>
 
   <!-- ===== BOTTOM NAV ===== -->
-  <nav class="bar">
-    <a href="index.html" class="active">
+  <nav class="bar" role="navigation" aria-label="Main Navigation">
+    <a href="index.html" class="active" aria-label="Home - Delightpk">
       <img src="Delight icons/Home.png" width="22" height="22" alt="Home">
       <span>Home</span>
     </a>
-    <a href="Categories.html">
+    <a href="Categories.html" aria-label="Browse Categories">
       <img src="Delight icons/Categories.png" width="22" height="22" alt="Categories">
       <span>Categories</span>
     </a>
-    <a href="cart.html">
+    <a href="cart.html" aria-label="Shopping Cart">
       <img src="Delight icons/Cart.png" width="22" height="22" alt="Cart">
       <span>Cart</span>
     </a>
-    <a href="profile.html">
+    <a href="profile.html" aria-label="My Profile">
       <img src="Delight icons/Profile.png" width="22" height="22" alt="Profile">
       <span>Profile</span>
     </a>
@@ -160,7 +277,7 @@
   </div>
 
   <!-- ===== FLASH SALE SECTION ===== -->
-  <div class="section-block" id="flashSaleBox" style="display:none;">
+  <section class="section-block" id="flashSaleBox" aria-label="Flash Sale" style="display:none;">
     <div class="section-header">
       <div class="section-title flash-title">
         <span class="fire-icon">🔥</span> Flash Sale
@@ -168,8 +285,8 @@
       </div>
       <a class="see-all-btn" href="#">See All</a>
     </div>
-    <div id="flashSaleContainer" class="flash-sale-grid"></div>
-  </div>
+    <div id="flashSaleContainer" class="flash-sale-grid" role="list" aria-label="Flash Sale Products"></div>
+  </section>
 
   <!-- ===== RECENTLY VIEWED SECTION ===== -->
   <div class="section-block" id="recentlyViewedBox" style="display:none;">
@@ -195,10 +312,70 @@
   <div class="products-section-header" id="allProductsHeader" style="display:none;">
     <div class="section-title"><span>🛍️</span> All Products</div>
   </div>
-  <div id="itemContainer" class="container" style="display:none;"></div>
+  <main id="itemContainer" class="container" role="main" aria-label="All Products" style="display:none;"></main>
+
+  <!-- ===== HIDDEN SEO TEXT ===== -->
+  <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+    <p>Delightpk is Pakistan's trusted online shopping store. Buy fashion, electronics, home essentials, smart watches, earbuds, power banks, tripod stands, wall clocks and more. We offer fast delivery across all cities of Pakistan including Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar and more. Cash on delivery available. Best prices guaranteed.</p>
+  </div>
 
   <!-- ===== SCRIPTS ===== -->
   <script src="index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- ===== PWA: Service Worker + Install Banner ===== -->
+  <script>
+    // Service Worker Register
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('✅ PWA Ready!', reg.scope))
+          .catch(err => console.log('❌ SW Error:', err));
+      });
+    }
+
+    // Install Banner (Android Chrome)
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      if (document.getElementById('pwa-banner')) return;
+
+      const banner = document.createElement('div');
+      banner.id = 'pwa-banner';
+      banner.innerHTML = `
+        <div style="position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:white;border-radius:16px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,0.2);display:flex;align-items:center;gap:12px;z-index:99999;max-width:320px;width:90%;animation:pwaSlide 0.4s ease;">
+          <div style="background:#ff6b00;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🛒</div>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:13px;color:#1a1a1a;">Delight PK Install Karo</div>
+            <div style="font-size:11px;color:#666;margin-top:2px;">App jaisa experience pao!</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <button onclick="installPWA()" style="background:#ff6b00;color:white;border:none;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;">Install</button>
+            <button onclick="document.getElementById('pwa-banner').remove();" style="background:none;border:none;color:#999;font-size:11px;cursor:pointer;">Bad mein</button>
+          </div>
+        </div>
+        <style>
+          @keyframes pwaSlide {
+            from { transform:translateX(-50%) translateY(80px); opacity:0; }
+            to   { transform:translateX(-50%) translateY(0);    opacity:1; }
+          }
+        </style>
+      `;
+      document.body.appendChild(banner);
+    });
+
+    function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        const b = document.getElementById('pwa-banner');
+        if (b) b.remove();
+      });
+    }
+  </script>
+
 </body>
 </html>
