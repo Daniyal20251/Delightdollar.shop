@@ -1,168 +1,931 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ff6b00">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#e65100">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DelightPK">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<title>www.delight.pk - Cart Order</title>
-</head>
+<title>Cart Order – Delight.pk</title>
 <style>
-body { font-family: 'Segoe UI', sans-serif; max-width: 480px; margin: auto; padding: 20px; background-color: #fdfdfd; color: #333; }
-h2 { text-align: center; margin-bottom: 20px; color: #ef6c00; }
-input, textarea, button, select { width: 100%; padding: 12px; margin-top: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; box-sizing: border-box; }
-button { background-color: #ef6c00; color: #fff; font-size: 17px; font-weight: bold; cursor: pointer; border: none; transition: background 0.3s; }
-button:hover { background-color: #d65c00; }
-.product-info { padding: 12px; background: #fff3e0; border: 1px solid #ef6c00; border-radius: 10px; margin-bottom: 20px; }
-.product-card { padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ef6c00; background-color: #fff8e1; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display:flex; gap:10px; }
-.product-title { font-weight: bold; margin-bottom: 4px; }
-.price { color: #d65c00; font-weight: bold; margin-bottom: 8px; }
-.label { font-weight: 500; font-size: 14px; margin-top: 4px; }
-.total-box { background-color: #fff3e0; border: 1px solid #ef6c00; border-radius: 10px; padding: 12px; font-weight: bold; margin-top: 15px; text-align:right; }
-.description { font-size: 13px; color: #555; margin-top: 4px; }
+:root {
+  --orange: #e65100;
+  --orange2: #ff8f00;
+  --orange3: #ff9800;
+  --orange-bg: #fff8f0;
+  --orange-light: #fff3e0;
+  --orange-border: #ffcc80;
+  --radius: 16px;
+  --shadow: 0 4px 20px rgba(230,81,0,0.12);
+  --shadow-lg: 0 8px 32px rgba(230,81,0,0.18);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(160deg, #fff3e0 0%, #f5f5f5 50%, #fafafa 100%);
+  min-height: 100vh; color: #1a1a1a; padding-bottom: 20px;
+}
+
+/* HEADER */
+.hdr {
+  background: linear-gradient(135deg, var(--orange), var(--orange2), var(--orange3));
+  padding: 16px 18px 14px; text-align: center;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 20px rgba(230,81,0,0.35);
+}
+.hdr h1 { color: #fff; font-size: 20px; font-weight: 800; letter-spacing: 0.3px; }
+.hdr p  { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; font-weight: 500; }
+
+.wrap { max-width: 500px; margin: auto; padding: 14px 12px 30px; }
+
+/* CART SECTION */
+.cart-sec {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1.5px solid var(--orange-border);
+  overflow: hidden; margin-bottom: 14px;
+}
+.cart-head {
+  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.cart-head span { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.3px; }
+.cart-head .cart-count { 
+  background: rgba(255,255,255,0.2); color: #fff; font-size: 12px; font-weight: 700;
+  padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(4px);
+}
+.cart-body { padding: 0; }
+
+/* Cart Item */
+.cart-item {
+  display: flex; gap: 12px; padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+  transition: background 0.2s; position: relative;
+}
+.cart-item:last-child { border-bottom: none; }
+.cart-item:hover { background: var(--orange-light); }
+.cart-item img {
+  width: 72px; height: 72px; border-radius: 10px;
+  object-fit: cover; border: 2px solid var(--orange-border); flex-shrink: 0;
+}
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-title { font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cart-item-meta { font-size: 11.5px; color: #777; margin-bottom: 2px; }
+.cart-item-price { font-size: 15px; font-weight: 800; color: var(--orange); margin-top: 4px; }
+
+/* Quantity Controls */
+.qty-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.qty-btn {
+  width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--orange-border);
+  background: var(--orange-light); color: var(--orange); font-size: 16px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; user-select: none;
+}
+.qty-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+.qty-btn:active { transform: scale(0.92); }
+.qty-val { font-size: 14px; font-weight: 700; color: #1a1a1a; min-width: 24px; text-align: center; }
+
+/* Remove Button */
+.remove-btn {
+  position: absolute; right: 12px; top: 12px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #ffebee; color: #ff1744; border: none;
+  font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; opacity: 0.7;
+}
+.remove-btn:hover { opacity: 1; background: #ff1744; color: #fff; transform: scale(1.1); }
+
+/* Cart Empty State */
+.cart-empty {
+  text-align: center; padding: 40px 20px; color: #aaa;
+}
+.cart-empty .empty-icon { font-size: 56px; margin-bottom: 12px; opacity: 0.6; }
+.cart-empty p { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+.shop-btn {
+  display: inline-block; background: linear-gradient(135deg, var(--orange), var(--orange2));
+  color: #fff; padding: 12px 28px; border-radius: 30px; font-size: 14px; font-weight: 700;
+  text-decoration: none; box-shadow: 0 4px 14px rgba(230,81,0,0.3); transition: transform 0.2s;
+}
+.shop-btn:hover { transform: translateY(-2px); }
+
+/* Cart Summary Bar */
+.cart-summary {
+  background: linear-gradient(135deg, var(--orange-light), #fff8f0);
+  padding: 14px 16px; border-top: 2px solid var(--orange-border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cart-summary .sum-label { font-size: 13px; color: #666; font-weight: 600; }
+.cart-summary .sum-val { font-size: 18px; font-weight: 800; color: var(--orange); }
+
+/* SECTIONS */
+.sec {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1.5px solid #eee;
+  margin-bottom: 14px; overflow: hidden;
+}
+.sec-title {
+  font-size: 13px; font-weight: 700; color: var(--orange);
+  padding: 14px 16px 0; display: flex; align-items: center; gap: 8px;
+}
+.sec-title::after {
+  content: ''; flex: 1; height: 1.5px; background: var(--orange-border);
+  margin-left: 6px; border-radius: 2px;
+}
+.sec-body { padding: 14px 16px 16px; }
+
+/* PAYMENT TYPE */
+.pay-type-row { display: flex; gap: 10px; margin-bottom: 0; }
+.pay-type-btn {
+  flex: 1; padding: 14px 10px; border: 2px solid #e0e0e0; border-radius: 14px;
+  background: #fafafa; cursor: pointer; text-align: center; font-family: inherit;
+  transition: all 0.25s;
+}
+.pay-type-btn .pt-icon { font-size: 28px; margin-bottom: 5px; transition: transform 0.3s; }
+.pay-type-btn .pt-lbl  { font-size: 13px; font-weight: 700; color: #888; }
+.pay-type-btn .pt-sub  { font-size: 11px; color: #bbb; margin-top: 3px; }
+.pay-type-btn:hover { border-color: #ccc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.pay-type-btn:hover .pt-icon { transform: scale(1.15); }
+.pay-type-btn.sel-cod {
+  border-color: #2196f3; background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  box-shadow: 0 4px 16px rgba(33,150,243,0.2);
+}
+.pay-type-btn.sel-cod .pt-lbl { color: #1565c0; }
+.pay-type-btn.sel-adv {
+  border-color: var(--orange); background: linear-gradient(135deg, var(--orange-bg), var(--orange-light));
+  box-shadow: 0 4px 16px rgba(230,81,0,0.2);
+}
+.pay-type-btn.sel-adv .pt-lbl { color: var(--orange); }
+
+/* DELIVERY BANNER */
+.del-banner {
+  display: none; margin-top: 14px; border-radius: 12px; padding: 12px 16px;
+  font-size: 13px; font-weight: 600; align-items: center; gap: 10px;
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.del-banner.show { display: flex; }
+.del-banner.cod-b { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 1.5px solid #90caf9; color: #1565c0; }
+.del-banner.adv-b { background: linear-gradient(135deg, var(--orange-bg), var(--orange-light)); border: 1.5px solid var(--orange-border); color: var(--orange); }
+.del-banner .del-price { font-size: 17px; font-weight: 800; margin-left: auto; }
+
+/* PAYMENT METHOD */
+.pm-row { display: flex; gap: 10px; margin-top: 14px; }
+.pm-btn {
+  flex: 1; padding: 14px 10px; border: 2px solid #e0e0e0; border-radius: 14px;
+  background: #fafafa; cursor: pointer; text-align: center; font-family: inherit;
+  transition: all 0.25s;
+}
+.pm-btn .pm-ic { font-size: 28px; margin-bottom: 4px; transition: transform 0.3s; }
+.pm-btn .pm-nm { font-size: 12px; font-weight: 700; color: #999; }
+.pm-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.pm-btn:hover .pm-ic { transform: scale(1.15); }
+.pm-btn.sel-ep { border-color: #00a651; background: linear-gradient(135deg, #f0fff7, #e0f7fa); box-shadow: 0 4px 16px rgba(0,166,81,0.15); }
+.pm-btn.sel-ep .pm-nm { color: #00a651; }
+.pm-btn.sel-jz { border-color: #d71920; background: linear-gradient(135deg, #fff5f5, #ffebee); box-shadow: 0 4px 16px rgba(215,25,32,0.15); }
+.pm-btn.sel-jz .pm-nm { color: #d71920; }
+
+/* ACCOUNT BOX */
+.acct-box {
+  display: none; margin-top: 14px;
+  background: linear-gradient(135deg, var(--orange-bg), #fff8f0);
+  border: 1.5px solid var(--orange-border); border-radius: 14px; padding: 16px;
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.acct-box.show { display: block; }
+.acct-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.acct-lbl { font-size: 10px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.acct-num { font-size: 20px; font-weight: 800; color: var(--orange); letter-spacing: 0.5px; }
+.acct-name { font-size: 13px; color: #555; margin-bottom: 12px; font-weight: 500; }
+.copy-btn {
+  background: linear-gradient(135deg, var(--orange), var(--orange2));
+  color: #fff; border: none; border-radius: 10px; padding: 7px 14px;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.copy-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(230,81,0,0.3); }
+.copy-btn:active { transform: scale(0.95); }
+.send-amt {
+  display: inline-block; background: linear-gradient(135deg, var(--orange), var(--orange2));
+  color: #fff; border-radius: 10px; padding: 8px 16px; font-size: 14px;
+  font-weight: 700; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(230,81,0,0.2);
+}
+.qr-img {
+  width: 100%; max-width: 320px; display: block;
+  margin: 0 auto 10px; border-radius: 10px;
+  border: 2px solid var(--orange-border); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* SCREENSHOT UPLOAD */
+.ss-label {
+  display: flex; flex-direction: column; align-items: center;
+  border: 2px dashed var(--orange-border); border-radius: 14px;
+  padding: 24px 16px; cursor: pointer; background: linear-gradient(135deg, var(--orange-bg), var(--orange-light));
+  transition: all 0.3s; margin-top: 14px;
+}
+.ss-label:hover { border-color: var(--orange); background: linear-gradient(135deg, var(--orange-light), #fff); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(230,81,0,0.12); }
+.ss-icon { font-size: 36px; margin-bottom: 8px; transition: transform 0.3s; }
+.ss-label:hover .ss-icon { transform: scale(1.1); }
+.ss-txt  { font-size: 14px; color: #777; font-weight: 600; }
+.ss-sub  { font-size: 12px; color: #bbb; margin-top: 3px; }
+#ssInput { display: none; }
+#ssPreview {
+  width: 100%; max-height: 220px; object-fit: contain;
+  border-radius: 12px; margin-top: 12px; display: none;
+  border: 2px solid var(--orange-border); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* FORM FIELDS */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px;
+}
+.field input, .field textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid #e0e0e0; border-radius: 12px;
+  font-size: 15px; font-family: inherit;
+  background: #fafafa; color: #1a1a1a;
+  transition: all 0.25s; outline: none;
+}
+.field input:focus, .field textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(230,81,0,0.08);
+  background: #fff;
+}
+.field textarea { resize: none; }
+
+/* PROVINCE DROPDOWN */
+.prov-btn {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid #e0e0e0; border-radius: 12px;
+  font-size: 15px; background: #fafafa; color: #1a1a1a;
+  text-align: left; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: inherit; transition: all 0.25s;
+}
+.prov-btn.open {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(230,81,0,0.08);
+  border-radius: 12px 12px 0 0; background: #fff;
+}
+.prov-arrow { font-size: 10px; transition: transform 0.3s; color: #999; }
+.prov-btn.open .prov-arrow { transform: rotate(180deg); color: var(--orange); }
+.prov-dd {
+  display: none; border: 1.5px solid var(--orange);
+  border-top: none; border-radius: 0 0 12px 12px;
+  background: #fff; overflow: hidden;
+  box-shadow: 0 12px 24px rgba(230,81,0,0.12);
+  max-height: 240px; overflow-y: auto;
+}
+.prov-dd.show { display: block; animation: slideDown 0.25s ease; }
+.prov-opt {
+  padding: 13px 16px; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; gap: 10px;
+  transition: all 0.15s;
+}
+.prov-opt:not(:last-child) { border-bottom: 1px solid #f5f5f5; }
+.prov-opt:hover { background: var(--orange-light); padding-left: 20px; }
+.prov-opt.active { background: var(--orange-light); color: var(--orange); font-weight: 700; }
+
+/* ORDER TOTAL */
+.order-total {
+  background: linear-gradient(135deg, var(--orange), var(--orange2), var(--orange3));
+  border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
+  display: none; box-shadow: var(--shadow-lg);
+}
+.order-total.show { display: flex; align-items: center; justify-content: space-between; }
+.ot-label { color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 500; }
+.ot-amount { color: #fff; font-size: 15px; font-weight: 800; }
+
+/* SUBMIT */
+.submit-btn {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, var(--orange), var(--orange2), var(--orange3));
+  color: #fff; border: none; border-radius: 16px;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 24px rgba(230,81,0,0.35);
+  transition: all 0.25s; letter-spacing: 0.4px; position: relative; overflow: hidden;
+}
+.submit-btn::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(230,81,0,0.4); }
+.submit-btn:hover::after { left: 100%; }
+.submit-btn:active { transform: scale(0.97); }
+.submit-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+/* LOADING */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+  backdrop-filter: blur(4px);
+}
+.overlay.show { display: flex; }
+.spinner {
+  width: 50px; height: 50px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.overlay p { color: #fff; font-size: 16px; font-weight: 600; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #222; color: #fff; padding: 12px 24px;
+  border-radius: 30px; font-size: 14px; font-weight: 500;
+  opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 1000;
+  max-width: 90vw; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* NO PRODUCT */
+.no-product { text-align: center; padding: 60px 20px; color: #aaa; }
+.no-product .ni { font-size: 56px; margin-bottom: 14px; }
+.no-product p { font-size: 16px; font-weight: 600; }
+
+/* RESPONSIVE */
+@media (max-width: 400px) {
+  .wrap { padding: 10px 8px 30px; }
+  .cart-item { padding: 12px; }
+  .cart-item img { width: 60px; height: 60px; }
+}
 </style>
+</head>
 <body>
 
-<h2>🛒 Place Your Order</h2>
-<div id="productInfoContainer" class="product-info"></div>
+<div class="hdr">
+  <h1>🛒 Place Your Order</h1>
+</div>
 
-<form id="orderForm" onsubmit="handleSubmit(event)">
-  <input type="text" name="Name" placeholder="Your Name" required>
-  <input type="text" name="Phone" minlength="11" maxlength="11" placeholder="Phone Number" required>
-  <select name="province" required>
-    <option value="">Province / Region</option>
-    <option value="Sindh">Sindh</option>
-    <option value="Punjab">Punjab</option>
-    <option value="Balochistan">Balochistan</option>
-    <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
-    <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
-    <option value="Azad Kashmir">Azad Kashmir</option>
-  </select>
-  <input type="text" name="City" placeholder="City" required>
-  <input type="text" name="Zone" placeholder="Zone / Area" required>
-  <textarea name="Full_Address" placeholder="Full Address" rows="3" required></textarea>
-  <button type="submit">✅ Confirm All Orders</button>
-</form>
+<div class="wrap" id="wrap"></div>
+
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <p id="overlayMsg">Placing your order...</p>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// 🔥 GET STORE PHONE FROM URL
-const urlParams = new URLSearchParams(window.location.search);
-const sellerPhone = urlParams.get("phone");
+// ── CONFIG ──
+const BACKEND     = "https://delight-backend--araindaniyalo2.replit.app";
+const ADMIN_PHONE = "03133196595";
 
-// ---------------- LOGIN CHECK ----------------
-const customer = JSON.parse(localStorage.getItem("customer"));
-
-if(!customer){
-    alert("Please login or Signup first!");
-    // 👇 Profile Stores.html ki tarah sellerPhone ke saath redirect
-    if (sellerPhone) {
-        window.location.href = `Stores Login.html?phone=${sellerPhone}`;
-    } else {
-        window.location.href = "Stores Login.html";
-    }
+// ── LOGIN CHECK ──
+const customer = JSON.parse(localStorage.getItem("customer") || "null");
+if (!customer) {
+  // Get seller phone from cart items for redirect
+  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  const sellerPhone = cartItems.length > 0 ? (cartItems[0].sellerPhone || "") : "";
+  alert("Please login first!");
+  window.location.href = sellerPhone ? `Stores Login.html?phone=${sellerPhone}` : "Stores Login.html";
 }
 
-// Cart data
-const container = document.getElementById("productInfoContainer");
-const orderCart = JSON.parse(localStorage.getItem("orderCartItems")) || [];
+// ── CART ──
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+let sellerSettings = null;
+let adminSettings  = null;
+let payType = "";
+let payMethod = "";
+let selectedProv = "";
+let screenshotFile = null;
 
-if(orderCart.length === 0){
-  container.innerHTML = "<h3 style='color:red;text-align:center;'>❌ No products in cart.</h3>";
+const wrap = document.getElementById("wrap");
+
+// ── TOAST ──
+function toast(msg, dur = 2800) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), dur);
+}
+
+// ── BOOT ──
+if (!cart || cart.length === 0) {
+  renderEmptyCart();
 } else {
-  let grandTotal = 0;
-  container.innerHTML = "";
+  init();
+}
 
-  orderCart.forEach(item => {
-    const price = Number(item.price) || 0;
-    const quantity = Number(item.quantity) || 1;
-    const delivery = Number(item.delivery) || 0;
-    const total = price * quantity + delivery;
-    grandTotal += total;
+async function init() {
+  try {
+    // ── MULTI-STORE: Sab sellers ki delivery charges collect karo ──
+    const sellerPhones = [...new Set(cart.map(item => item.sellerPhone || ADMIN_PHONE))];
+    const sellerPromises = sellerPhones.map(phone =>
+      fetch(`${BACKEND}/settings?phone=${phone}`).then(r => r.json()).catch(() => ({ delivery: 0, advanceDelivery: 0 }))
+    );
+    const sellerResults = await Promise.all(sellerPromises);
+    sellerSettings = {};
+    sellerPhones.forEach((phone, i) => {
+      sellerSettings[phone] = sellerResults[i];
+    });
 
-    container.innerHTML += `
-      <div class="product-card">
-        <img src="${item.image}" style="width:90px;height:90px;border-radius:8px;object-fit:cover;">
-        <div>
-          <div class="product-title">${item.title}</div>
-          <div class="label">Color: ${item.selectedColor || "N/A"}</div>
-          <div class="label">Size: ${item.selectedSize || "N/A"}</div>
-          <div class="label">Quantity: ${quantity}</div>
-          <div class="label">Price: Rs. ${price} × ${quantity} = Rs. ${price*quantity}</div>
-          <div class="label">Delivery: Rs. ${delivery}</div>
-          <div class="label"><strong>Total:</strong> Rs. ${total}</div>
-        </div>
-      </div>
-    `;
+    // ── ADMIN: Sirf admin ka settings (easypaisa/jazzcash) ──
+    const adminR = await fetch(`${BACKEND}/settings?phone=${ADMIN_PHONE}`);
+    adminSettings = await adminR.json();
+  } catch(e) {
+    sellerSettings = {};
+    adminSettings  = { easypaisa: {}, jazzcash: {} };
+  }
+  render();
+}
+
+// ── PROVINCES ──
+const PROVS = [
+  ["Punjab","🌾"], ["Sindh","🌊"], ["Khyber Pakhtunkhwa","⛰️"],
+  ["Balochistan","🏜️"], ["Gilgit-Baltistan","🏔️"], ["Azad Kashmir","🍃"]
+];
+
+// ── CALCULATIONS ──
+function getCartTotals() {
+  // Subtotal: har item ka price * qty
+  const subtotal = cart.reduce((sum, item) => {
+    return sum + (Number(item.finalPrice || item.price || 0) * (item.qty || item.quantity || 1));
+  }, 0);
+
+  // Delivery: har unique seller ka delivery charge (first item per seller)
+  let totalDel = 0;
+  const seenSellers = new Set();
+  cart.forEach(item => {
+    const sellerPhone = item.sellerPhone || ADMIN_PHONE;
+    const sellerSet = sellerSettings[sellerPhone] || { delivery: 0, advanceDelivery: 0 };
+    if (!seenSellers.has(sellerPhone)) {
+      const del = payType === "cod"
+        ? Number(sellerSet.delivery || 0)
+        : (Number(sellerSet.advanceDelivery || 0) > 0 ? Number(sellerSet.advanceDelivery || 0) : Number(sellerSet.delivery || 0));
+      totalDel += del;
+      seenSellers.add(sellerPhone);
+    }
   });
 
-  container.innerHTML += `<div class="total-box">💰 Grand Total: Rs. ${grandTotal}</div>`;
+  const total = subtotal + totalDel;
+  return { subtotal, del: totalDel, total };
 }
 
-// ⭐ FINAL ORDER SUBMIT FUNCTION ⭐
-async function handleSubmit(event){
-  event.preventDefault();
+// ── RENDER ──
+function render() {
+  const { subtotal, del, total } = getCartTotals();
 
-  const form = document.getElementById("orderForm");
-  const button = form.querySelector("button[type='submit']");
-  button.disabled = true;
-  button.innerText = "⏳ Placing Orders...";
+  // ── ADMIN ACCOUNTS: Sirf admin ka (03133196595) ──
+  const hasEP = !!(adminSettings?.easypaisa?.accountNumber);
+  const hasJZ = !!(adminSettings?.jazzcash?.accountNumber);
+  const hasAdvance = (hasEP || hasJZ);
 
-  const formData = new FormData(form);
-  const userData = Object.fromEntries(formData.entries());
+  wrap.innerHTML = `
 
-  for(const item of orderCart){
+  <!-- CART ITEMS -->
+  <div class="cart-sec">
+    <div class="cart-head">
+      <span>📦 Cart Items</span>
+      <div class="cart-count">${cart.length} item${cart.length !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="cart-body" id="cartBody">
+      ${cart.map((item, idx) => `
+        <div class="cart-item" data-idx="${idx}">
+          <button class="remove-btn" onclick="removeItem(${idx})" title="Remove">✕</button>
+          <img src="${item.image}" onerror="this.src='https://placehold.co/72x72/ffeedd/e65100?text=IMG'" alt="">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.title}</div>
+            ${item.selectedColor ? `<div class="cart-item-meta">🎨 ${item.selectedColor}</div>` : ""}
+            ${item.selectedSize ? `<div class="cart-item-meta">📐 ${item.selectedSize}</div>` : ""}
+            <div class="cart-item-price">Rs. ${(Number(item.finalPrice || item.price || 0)).toLocaleString()} × ${item.qty || item.quantity || 1}</div>
+            <div class="qty-row">
+              <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+              <span class="qty-val">${item.qty || item.quantity || 1}</span>
+              <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+    <div class="cart-summary">
+      <span class="sum-label">Cart Subtotal</span>
+      <span class="sum-val">Rs. ${subtotal.toLocaleString()}</span>
+    </div>
+  </div>
 
-    const price = Number(item.price) || 0;
-    const quantity = Number(item.quantity) || 1;
-    const delivery = Number(item.delivery) || 0;
-    const total = price * quantity + delivery;
+  <!-- PAYMENT TYPE -->
+  <div class="sec">
+    <div class="sec-title">💰 Payment Type</div>
+    <div class="sec-body">
+      <div class="pay-type-row">
+        <button class="pay-type-btn" id="codBtn" type="button" onclick="selectPayType('cod')">
+          <div class="pt-icon">🚚</div>
+          <div class="pt-lbl">Cash on Delivery</div>
+          <div class="pt-sub">Pay when you receive</div>
+        </button>
+        ${hasAdvance ? `
+        <button class="pay-type-btn" id="advBtn" type="button" onclick="selectPayType('advance')">
+          <div class="pt-icon">💳</div>
+          <div class="pt-lbl">Advance Payment</div>
+          <div class="pt-sub">Pay now to confirm</div>
+        </button>` : ""}
+      </div>
 
-    const orderData = {
-      Productid: customer.phone,
-      buyerName: userData.Name,
-      buyerPhone: userData.Phone,
-      address: `${userData.province}, ${userData.City}, ${userData.Zone}, ${userData.Full_Address}`,
+      <!-- COD DELIVERY BANNER -->
+      <div class="del-banner cod-b" id="codBanner">
+        <span>🚚 COD Delivery Charges</span>
+        <span class="del-price" id="codDelPrice">Rs. ${del.toLocaleString()}</span>
+      </div>
 
-      product: {
-        title: item.title,
-        price: price,
-        color: item.selectedColor || "N/A",
-        size: item.selectedSize || "N/A",
-        image: item.image,
-        delivery: delivery,
-        description: item.description || "",
-        total: total
-      },
+      <!-- ADVANCE DELIVERY BANNER -->
+      ${hasAdvance ? `
+      <div class="del-banner adv-b" id="advBanner">
+        <span>⚡ Advance Delivery Charges</span>
+        <span class="del-price" id="advDelPrice">Rs. ${del.toLocaleString()}</span>
+      </div>
 
-      sellerPhone: item.sellerPhone || sellerPhone
-    };
+      <!-- PAYMENT METHOD BUTTONS -->
+      <div class="pm-row" id="pmRow" style="display:none">
+        ${hasEP ? `<button class="pm-btn" id="epBtn" type="button" onclick="selectPayMethod('easypaisa')">
+          <div class="pm-ic">💚</div>
+          <div class="pm-nm">Easypaisa</div>
+        </button>` : ""}
+        ${hasJZ ? `<button class="pm-btn" id="jzBtn" type="button" onclick="selectPayMethod('jazzcash')">
+          <div class="pm-ic">❤️</div>
+          <div class="pm-nm">JazzCash</div>
+        </button>` : ""}
+      </div>
 
-    try {
-      await fetch("https://delight-backend--araindaniyalo2.replit.app/place-order", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(orderData)
-      });
-    } catch(e){
-      console.error("Order error:", e);
-    }
+      <!-- EASYPAISA BOX -->
+      ${hasEP ? `
+      <div class="acct-box" id="epBox">
+        <div class="send-amt">Send: Rs. ${total.toLocaleString()}</div>
+        <div class="acct-top">
+          <div>
+            <div class="acct-lbl">Easypaisa Account</div>
+            <div class="acct-lbl">👉 Raast Till Payment</div>
+            <div class="acct-num" id="epNum">${adminSettings.easypaisa.accountNumber}</div>
+            ${adminSettings.easypaisa.businessName ? `<div class="acct-name">${adminSettings.easypaisa.businessName}</div>` : ""}
+          </div>
+          <button class="copy-btn" onclick="copyNum('epNum')">📋 Copy</button>
+        </div>
+        ${adminSettings.easypaisa.qrCode ? `<img src="${adminSettings.easypaisa.qrCode}" class="qr-img" alt="QR Code">` : ""}
+      </div>` : ""}
+
+      <!-- JAZZCASH BOX -->
+      ${hasJZ ? `
+      <div class="acct-box" id="jzBox">
+        <div class="send-amt">Send: Rs. ${total.toLocaleString()}</div>
+        <div class="acct-top">
+          <div>
+            <div class="acct-lbl">JazzCash Account</div>
+            <div class="acct-lbl">👉 Raast Till Payment</div>
+            <div class="acct-num" id="jzNum">${adminSettings.jazzcash.accountNumber}</div>
+            ${adminSettings.jazzcash.businessName ? `<div class="acct-name">${adminSettings.jazzcash.businessName}</div>` : ""}
+          </div>
+          <button class="copy-btn" onclick="copyNum('jzNum')">📋 Copy</button>
+        </div>
+        ${adminSettings.jazzcash.qrCode ? `<img src="${adminSettings.jazzcash.qrCode}" class="qr-img" alt="QR Code">` : ""}
+      </div>` : ""}
+
+      <!-- SCREENSHOT UPLOAD -->
+      <div id="ssSection" style="display:none">
+        <label class="ss-label" for="ssInput">
+          <span class="ss-icon">📸</span>
+          <span class="ss-txt">Upload Payment Screenshot</span>
+          <span class="ss-sub">Tap to choose image</span>
+        </label>
+        <input type="file" id="ssInput" accept="image/*" onchange="handleSS(this)">
+        <img id="ssPreview" src="" alt="preview">
+      </div>
+      ` : ""}
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="order-total" id="orderTotal">
+    <div>
+      <div class="ot-label">Total Price</div>
+      <div class="ot-label" id="totalType" style="font-size:12px;opacity:0.8;"></div>
+    </div>
+    <div class="ot-amount" id="totalAmt">Rs. ${total.toLocaleString()}</div>
+  </div>
+
+  <!-- DELIVERY DETAILS -->
+  <div class="sec">
+    <div class="sec-title">📋 Delivery Details</div>
+    <div class="sec-body">
+
+      <div class="field">
+        <label>Your Name *</label>
+        <input type="text" id="fName" placeholder="Full Name" value="${customer?.name || ''}">
+      </div>
+
+      <div class="field">
+        <label>Phone Number *</label>
+        <input type="tel" id="fPhone" placeholder="03xxxxxxxxx" maxlength="11" inputmode="numeric" value="${customer?.phone || ''}">
+      </div>
+
+      <div class="field">
+        <label>Province / Region *</label>
+        <button type="button" class="prov-btn" id="provBtn" onclick="toggleProv()">
+          <span id="provLbl">Select Province</span>
+          <span class="prov-arrow">▼</span>
+        </button>
+        <div class="prov-dd" id="provDd">
+          ${PROVS.map(([n,ic]) => `
+            <div class="prov-opt" onclick="pickProv('${n}')" data-name="${n}">
+              <span>${ic}</span>${n}
+            </div>`).join("")}
+        </div>
+      </div>
+
+      <div class="field">
+        <label>City *</label>
+        <input type="text" id="fCity" placeholder="Lahore, Karachi, Peshawar...">
+      </div>
+
+      <div class="field">
+        <label>Area / Zone *</label>
+        <input type="text" id="fZone" placeholder="e.g: DHA, Saddar...">
+      </div>
+
+      <div class="field">
+        <label>Full Address *</label>
+        <textarea id="fAddr" rows="3" placeholder="Full address..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+    ✅ Place Order
+  </button>
+  <div style="height:20px"></div>
+  `;
+}
+
+// ── CART ACTIONS ──
+function changeQty(idx, delta) {
+  const item = cart[idx];
+  const currentQty = item.qty || item.quantity || 1;
+  const newQty = currentQty + delta;
+  if (newQty < 1) return;
+  if (newQty > 10) { toast("⚠️ Max 10 items per product"); return; }
+  item.qty = newQty;
+  if (item.quantity) item.quantity = newQty;
+  saveCart();
+  render();
+}
+
+function removeItem(idx) {
+  const item = cart[idx];
+  if (!confirm(`Remove "${item.title}" from cart?`)) return;
+  cart.splice(idx, 1);
+  saveCart();
+  if (cart.length === 0) {
+    renderEmptyCart();
+  } else {
+    render();
+  }
+  toast("🗑️ Item removed");
+}
+
+function saveCart() {
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+// ── PAY TYPE ──
+function selectPayType(type) {
+  payType = type;
+  payMethod = "";
+  screenshotFile = null;
+
+  const { subtotal, del, total } = getCartTotals();
+
+  const codBtn = document.getElementById("codBtn");
+  const advBtn = document.getElementById("advBtn");
+  if (codBtn) codBtn.classList.toggle("sel-cod", type === "cod");
+  if (advBtn) advBtn.classList.toggle("sel-adv", type === "advance");
+
+  const codB = document.getElementById("codBanner");
+  const advB = document.getElementById("advBanner");
+  if (codB) codB.classList.toggle("show", type === "cod");
+  if (advB) advB.classList.toggle("show", type === "advance");
+
+  // Update delivery prices
+  const codDelPrice = document.getElementById("codDelPrice");
+  const advDelPrice = document.getElementById("advDelPrice");
+  if (codDelPrice) codDelPrice.textContent = `Rs. ${del.toLocaleString()}`;
+  if (advDelPrice) advDelPrice.textContent = `Rs. ${del.toLocaleString()}`;
+
+  const pmRow = document.getElementById("pmRow");
+  if (pmRow) pmRow.style.display = type === "advance" ? "flex" : "none";
+
+  ["epBox","jzBox","ssSection"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove("show"); el.style.display = "none"; }
+  });
+  if (document.getElementById("epBtn")) document.getElementById("epBtn")?.classList.remove("sel-ep");
+  if (document.getElementById("jzBtn")) document.getElementById("jzBtn")?.classList.remove("sel-jz");
+  if (document.getElementById("ssPreview")) { document.getElementById("ssPreview").style.display = "none"; }
+
+  const ot = document.getElementById("orderTotal");
+  ot.classList.add("show");
+  document.getElementById("totalAmt").textContent = `Rs. ${total.toLocaleString()}`;
+  document.getElementById("totalType").textContent =
+    type === "cod" ? "(Cash on Delivery)" : "(Advance Payment)";
+}
+
+// ── PAY METHOD ──
+function selectPayMethod(method) {
+  payMethod = method;
+
+  const epBtn = document.getElementById("epBtn");
+  const jzBtn = document.getElementById("jzBtn");
+  const epBox = document.getElementById("epBox");
+  const jzBox = document.getElementById("jzBox");
+  const ssSection = document.getElementById("ssSection");
+
+  if (epBtn) epBtn.classList.remove("sel-ep");
+  if (jzBtn) jzBtn.classList.remove("sel-jz");
+  if (epBox) { epBox.classList.remove("show"); epBox.style.display = "none"; }
+  if (jzBox) { jzBox.classList.remove("show"); jzBox.style.display = "none"; }
+
+  if (method === "easypaisa" && epBox) {
+    epBtn?.classList.add("sel-ep");
+    epBox.classList.add("show"); epBox.style.display = "block";
+  } else if (method === "jazzcash" && jzBox) {
+    jzBtn?.classList.add("sel-jz");
+    jzBox.classList.add("show"); jzBox.style.display = "block";
   }
 
-  // ✅ Order success → form clear + cart clear + redirect
-  form.reset();
-  localStorage.removeItem("orderCartItems");
-  window.location.href = "thanks.html";
+  if (ssSection) { ssSection.style.display = "block"; }
 }
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
+
+// ── PROVINCE ──
+function toggleProv() {
+  document.getElementById("provBtn").classList.toggle("open");
+  document.getElementById("provDd").classList.toggle("show");
 }
+function pickProv(name) {
+  selectedProv = name;
+  document.getElementById("provLbl").textContent = name;
+  document.getElementById("provBtn").classList.remove("open");
+  document.getElementById("provDd").classList.remove("show");
+  document.querySelectorAll(".prov-opt").forEach(el =>
+    el.classList.toggle("active", el.dataset.name === name)
+  );
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest(".prov-btn") && !e.target.closest(".prov-dd")) {
+    document.getElementById("provBtn")?.classList.remove("open");
+    document.getElementById("provDd")?.classList.remove("show");
+  }
+});
+
+// ── COPY ──
+function copyNum(id) {
+  const txt = document.getElementById(id)?.textContent?.trim();
+  if (!txt) return;
+  navigator.clipboard.writeText(txt)
+    .then(() => toast("✅ Number copied!"))
+    .catch(() => {
+      const ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+      toast("✅ Number copied!");
+    });
+}
+
+// ── SCREENSHOT ──
+function handleSS(input) {
+  const file = input.files[0]; if (!file) return;
+  screenshotFile = file;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = document.getElementById("ssPreview");
+    img.src = e.target.result; img.style.display = "block";
+  };
+  r.readAsDataURL(file);
+}
+
+// ── SUBMIT ──
+async function handleSubmit() {
+  const name  = document.getElementById("fName")?.value?.trim();
+  const phone = document.getElementById("fPhone")?.value?.trim();
+  const city  = document.getElementById("fCity")?.value?.trim();
+  const zone  = document.getElementById("fZone")?.value?.trim();
+  const addr  = document.getElementById("fAddr")?.value?.trim();
+
+  if (!payType)                    return toast("⚠️ Please select a payment type");
+  if (!name)                       return toast("⚠️ Please enter your name");
+  if (!phone || phone.length < 11) return toast("⚠️ Please enter a valid 11-digit phone number");
+  if (!selectedProv)               return toast("⚠️ Please select a province");
+  if (!city)                       return toast("⚠️ Please enter your city");
+  if (!zone)                       return toast("⚠️ Please enter your area/zone");
+  if (!addr)                       return toast("⚠️ Please enter your full address");
+
+  if (payType === "advance") {
+    if (!payMethod)      return toast("⚠️ Please select Easypaisa or JazzCash");
+    if (!screenshotFile) return toast("⚠️ Please upload payment screenshot");
+  }
+
+  const { subtotal, del, total } = getCartTotals();
+
+  const overlay    = document.getElementById("overlay");
+  const overlayMsg = document.getElementById("overlayMsg");
+  const submitBtn  = document.getElementById("submitBtn");
+
+  overlay.classList.add("show");
+  submitBtn.disabled = true;
+
+  const placedOrderIds = [];
+  const seenSellers = new Set();
+
+  try {
+    for (let i = 0; i < cart.length; i++) {
+      const item = cart[i];
+      const sellerPhone = item.sellerPhone || ADMIN_PHONE;
+      const itemPrice = Number(item.finalPrice || item.price || 0) * (item.qty || item.quantity || 1);
+
+      // Delivery sirf first item per seller pe lagti hai
+      const isFirstForSeller = !seenSellers.has(sellerPhone);
+      const sellerSet = sellerSettings[sellerPhone] || { delivery: 0, advanceDelivery: 0 };
+      const itemDelivery = isFirstForSeller
+        ? (payType === "cod"
+            ? Number(sellerSet.delivery || 0)
+            : (Number(sellerSet.advanceDelivery || 0) > 0 ? Number(sellerSet.advanceDelivery || 0) : Number(sellerSet.delivery || 0)))
+        : 0;
+
+      if (isFirstForSeller) seenSellers.add(sellerPhone);
+
+      overlayMsg.textContent = `Placing order ${i + 1} of ${cart.length}...`;
+
+      // ── FIX: Advance mein bhi actual price bhejo ──
+      const orderData = {
+        buyerName:    name,
+        buyerPhone:   customer.phone,
+        addressPhone: phone,
+        address:      `${selectedProv}, ${city}, ${zone}, ${addr}`,
+        product: {
+          title:       item.title,
+          price:       payType === "advance" ? 0 : itemPrice,           // HAMESHA actual price
+          color:       item.selectedColor || "N/A",
+          size:        item.selectedSize || "N/A",
+          image:       item.image,
+          delivery:    itemDelivery,
+          description: item.description || "",
+          qty:         item.qty || item.quantity || 1,
+        },
+        sellerPhone: sellerPhone,
+      };
+
+      const res  = await fetch(`${BACKEND}/place-order`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(orderData),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || `Order failed for "${item.title}"`);
+
+      const orderId = json.order?.id || json.orderId || json.id || Date.now();
+      placedOrderIds.push(orderId);
+    }
+
+    // ── Advance payment proof: sirf ek baar upload karo ──
+    if (payType === "advance" && screenshotFile && placedOrderIds.length > 0) {
+      overlayMsg.textContent = "Uploading payment proof...";
+
+      const transactionId = `SS-${Date.now()}-${Math.floor(Math.random() * 9000 + 1000)}`;
+      const fd = new FormData();
+      fd.append("buyerName",     name);
+      fd.append("buyerPhone",    customer.phone);
+      fd.append("sellerPhone",   ADMIN_PHONE);
+      fd.append("orderId",       String(placedOrderIds[0]));
+      fd.append("amount",        String(total));
+      fd.append("paymentMethod", payMethod);
+      fd.append("transactionId", transactionId);
+      fd.append("screenshot",    screenshotFile);
+
+      const payRes  = await fetch(`${BACKEND}/payment/submit`, { method: "POST", body: fd });
+      const payJson = await payRes.json();
+      if (!payRes.ok) throw new Error(payJson.message || "Payment proof upload failed");
+    }
+
+    // ── FIX: Cart clear aur redirect ──
+    localStorage.removeItem("cart");
+    cart = [];
+
+    overlay.classList.remove("show");
+    window.location.replace("thanks.html");
+
+  } catch(err) {
+    overlay.classList.remove("show");
+    submitBtn.disabled = false;
+    toast("❌ Error: " + err.message, 4000);
+  }
+}
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 </script>
 </body>
 </html>

@@ -1,179 +1,790 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ff6b00">
+<meta name="theme-color" content="#e65100">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DelightPK">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<title>www.delight.pk - Place Order</title>
-</head>
+<title>Place Order – Delight.pk</title>
 <style>
+:root {
+  --orange: #e65100;
+  --orange2: #ff8f00;
+  --orange-bg: #fff8f0;
+  --orange-border: #ffcc80;
+  --radius: 14px;
+  --shadow: 0 4px 20px rgba(230,81,0,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Segoe UI', sans-serif;
-  max-width: 480px;
-  margin: auto;
-  padding: 20px;
-  background-color: #fdfdfd;
-  color: #333;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(160deg, #fff3e0 0%, #fafafa 100%);
+  min-height: 100vh;
+  color: #1a1a1a;
 }
-h2 { text-align: center; margin-bottom: 20px; color: #ef6c00; }
-input, textarea, button, select {
-  width: 100%; padding: 12px; margin-top: 12px;
-  border-radius: 8px; border: 1px solid #ccc; font-size: 15px;
-  box-sizing: border-box;
-}
-button {
-  background-color: #ef6c00; color: #fff; font-size: 17px;
-  font-weight: bold; cursor: pointer; border: none; transition: 0.3s;
-}
-button:hover { background-color: #d65c00; }
 
-.product-info { padding:12px; background:#fff3e0; border:1px solid #ef6c00; border-radius:10px; margin-bottom:20px; }
-.product-card { padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ef6c00; background:#fff8e1; }
-.product-title { font-weight:bold; margin-bottom:4px;}
-.price { color:#d65c00; font-weight:bold; margin-bottom:8px;}
-.label { font-weight:500; font-size:14px; margin-top:4px;}
-.description { margin-top:6px; font-size:14px; color:#555; }
+/* HEADER */
+.hdr {
+  background: linear-gradient(135deg, var(--orange), var(--orange2));
+  padding: 16px 20px 13px;
+  text-align: center;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 14px rgba(230,81,0,0.30);
+}
+.hdr h1 { color: #fff; font-size: 19px; font-weight: 700; }
+.hdr p  { color: rgba(255,255,255,0.82); font-size: 12px; margin-top: 2px; }
+
+.wrap { max-width: 480px; margin: auto; padding: 16px 14px 30px; }
+
+/* PRODUCT CARD */
+.prod-card {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1.5px solid var(--orange-border);
+  overflow: hidden; margin-bottom: 16px;
+}
+.prod-card-head {
+  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  padding: 9px 14px;
+}
+.prod-card-head span { color: #fff; font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px; }
+.prod-card-body { padding: 13px 14px; display: flex; gap: 12px; align-items: flex-start; }
+.prod-card-body img {
+  width: 86px; height: 86px; border-radius: 10px;
+  object-fit: cover; border: 2px solid var(--orange-border); flex-shrink: 0;
+}
+.prod-info { flex: 1; }
+.prod-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
+.prod-meta  { font-size: 12.5px; color: #777; margin-bottom: 2px; }
+.prod-price { font-size: 15px; font-weight: 800; color: var(--orange); margin-top: 5px; }
+.price-chips {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  padding: 10px 14px; background: var(--orange-bg);
+  border-top: 1px solid var(--orange-border);
+}
+.chip {
+  font-size: 12px; color: #666; background: #fff;
+  border: 1px solid var(--orange-border); border-radius: 20px; padding: 4px 10px;
+}
+.chip b { color: var(--orange); }
+.chip-total {
+  font-size: 12.5px; background: var(--orange); color: #fff;
+  border-radius: 20px; padding: 4px 12px; font-weight: 700;
+}
+
+/* SECTION */
+.sec {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1.5px solid #eee;
+  margin-bottom: 14px; overflow: hidden;
+}
+.sec-title {
+  font-size: 13px; font-weight: 700; color: var(--orange);
+  padding: 12px 14px 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.sec-title::after {
+  content: ''; flex: 1; height: 1.5px; background: var(--orange-border);
+  margin-left: 6px; border-radius: 2px;
+}
+.sec-body { padding: 12px 14px 15px; }
+
+/* PAYMENT TYPE TOGGLE */
+.pay-type-row { display: flex; gap: 10px; margin-bottom: 0; }
+.pay-type-btn {
+  flex: 1; padding: 13px 8px;
+  border: 2px solid #ddd; border-radius: 12px;
+  background: #fafafa; cursor: pointer; text-align: center;
+  font-family: inherit; transition: all 0.2s;
+}
+.pay-type-btn .pt-icon { font-size: 26px; margin-bottom: 4px; }
+.pay-type-btn .pt-lbl  { font-size: 12px; font-weight: 700; color: #999; }
+.pay-type-btn .pt-sub  { font-size: 11px; color: #bbb; margin-top: 2px; }
+.pay-type-btn.sel-cod {
+  border-color: #2196f3; background: #e3f2fd;
+}
+.pay-type-btn.sel-cod .pt-lbl { color: #1565c0; }
+.pay-type-btn.sel-adv {
+  border-color: var(--orange); background: var(--orange-bg);
+}
+.pay-type-btn.sel-adv .pt-lbl { color: var(--orange); }
+
+/* DELIVERY CHARGE BANNER */
+.del-banner {
+  display: none; margin-top: 12px;
+  border-radius: 10px; padding: 11px 14px;
+  font-size: 13px; font-weight: 600;
+  align-items: center; gap: 8px;
+}
+.del-banner.show { display: flex; }
+.del-banner.cod-b { background: #e3f2fd; border: 1.5px solid #90caf9; color: #1565c0; }
+.del-banner.adv-b { background: var(--orange-bg); border: 1.5px solid var(--orange-border); color: var(--orange); }
+.del-banner .del-price { font-size: 16px; font-weight: 800; margin-left: auto; }
+
+/* PAYMENT METHOD (easypaisa / jazzcash) */
+.pm-row { display: flex; gap: 10px; margin-top: 14px; }
+.pm-btn {
+  flex: 1; padding: 12px 8px;
+  border: 2px solid #ddd; border-radius: 12px;
+  background: #fafafa; cursor: pointer; text-align: center;
+  font-family: inherit; transition: all 0.2s;
+}
+.pm-btn .pm-ic { font-size: 26px; margin-bottom: 3px; }
+.pm-btn .pm-nm { font-size: 12px; font-weight: 700; color: #999; }
+.pm-btn.sel-ep { border-color: #00a651; background: #f0fff7; }
+.pm-btn.sel-ep .pm-nm { color: #00a651; }
+.pm-btn.sel-jz { border-color: #d71920; background: #fff5f5; }
+.pm-btn.sel-jz .pm-nm { color: #d71920; }
+
+/* ACCOUNT BOX */
+.acct-box {
+  display: none; margin-top: 12px;
+  background: var(--orange-bg); border: 1.5px solid var(--orange-border);
+  border-radius: 12px; padding: 13px 14px;
+}
+.acct-box.show { display: block; }
+.acct-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.acct-lbl { font-size: 11px; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+.acct-num { font-size: 19px; font-weight: 800; color: var(--orange); letter-spacing: 0.5px; }
+.acct-name { font-size: 13px; color: #444; margin-bottom: 10px; }
+.copy-btn {
+  background: var(--orange); color: #fff; border: none;
+  border-radius: 8px; padding: 6px 12px; font-size: 12px;
+  font-weight: 700; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+}
+.copy-btn:hover { background: #bf360c; }
+.send-amt {
+  display: inline-block; background: var(--orange); color: #fff;
+  border-radius: 8px; padding: 6px 14px; font-size: 13px;
+  font-weight: 700; margin-bottom: 11px;
+}
+.qr-img {
+  width: 100%; max-width: 320px; display: block;
+  margin: 0 auto 8px; border-radius: 8px;
+  border: 2px solid var(--orange-border);
+}
+
+/* SCREENSHOT UPLOAD */
+.ss-label {
+  display: flex; flex-direction: column; align-items: center;
+  border: 2px dashed var(--orange-border); border-radius: 12px;
+  padding: 18px 12px; cursor: pointer; background: var(--orange-bg);
+  transition: border-color 0.2s; margin-top: 12px;
+}
+.ss-label:hover { border-color: var(--orange); }
+.ss-icon { font-size: 30px; margin-bottom: 5px; }
+.ss-txt  { font-size: 13px; color: #888; }
+.ss-sub  { font-size: 11.5px; color: #bbb; margin-top: 2px; }
+#ssInput { display: none; }
+#ssPreview {
+  width: 100%; max-height: 200px; object-fit: contain;
+  border-radius: 10px; margin-top: 10px; display: none;
+  border: 2px solid var(--orange-border);
+}
+
+/* FORM FIELDS */
+.field { margin-bottom: 12px; }
+.field label {
+  display: block; font-size: 11.5px; font-weight: 700;
+  color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.field input, .field textarea {
+  width: 100%; padding: 11px 13px;
+  border: 1.5px solid #ddd; border-radius: 10px;
+  font-size: 15px; font-family: inherit;
+  background: #fafafa; color: #1a1a1a;
+  transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+}
+.field input:focus, .field textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(230,81,0,0.10);
+  background: #fff;
+}
+.field textarea { resize: none; }
+
+/* PROVINCE TOGGLE */
+.prov-btn {
+  width: 100%; padding: 11px 13px;
+  border: 1.5px solid #ddd; border-radius: 10px;
+  font-size: 15px; background: #fafafa; color: #1a1a1a;
+  text-align: left; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.prov-btn.open {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(230,81,0,0.10);
+  border-radius: 10px 10px 0 0; background: #fff;
+}
+.prov-arrow { font-size: 10px; transition: transform 0.2s; }
+.prov-btn.open .prov-arrow { transform: rotate(180deg); }
+.prov-dd {
+  display: none; border: 1.5px solid var(--orange);
+  border-top: none; border-radius: 0 0 10px 10px;
+  background: #fff; overflow: hidden;
+  box-shadow: 0 8px 20px rgba(230,81,0,0.12);
+}
+.prov-dd.show { display: block; }
+.prov-opt {
+  padding: 12px 14px; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; gap: 9px;
+  transition: background 0.15s;
+}
+.prov-opt:not(:last-child) { border-bottom: 1px solid #f5f5f5; }
+.prov-opt:hover { background: var(--orange-bg); }
+.prov-opt.active { background: var(--orange-bg); color: var(--orange); font-weight: 600; }
+
+/* TOTAL SUMMARY */
+.order-total {
+  background: linear-gradient(135deg, var(--orange), var(--orange2));
+  border-radius: 12px; padding: 13px 16px; margin-bottom: 14px;
+  display: none;
+}
+.order-total.show { display: flex; align-items: center; justify-content: space-between; }
+.ot-label { color: rgba(255,255,255,0.85); font-size: 13px; }
+.ot-amount { color: #fff; font-size: 15px; font-weight: 800; }
+
+/* SUBMIT */
+.submit-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--orange), var(--orange2));
+  color: #fff; border: none; border-radius: 14px;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(230,81,0,0.35);
+  transition: transform 0.15s, box-shadow 0.15s; letter-spacing: 0.3px;
+}
+.submit-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(230,81,0,0.4); }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+/* LOADING */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 999;
+  align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+}
+.overlay.show { display: flex; }
+.spinner {
+  width: 46px; height: 46px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.overlay p { color: #fff; font-size: 15px; font-weight: 600; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  background: #222; color: #fff; padding: 11px 22px;
+  border-radius: 30px; font-size: 14px; font-weight: 500;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000;
+  white-space: nowrap; max-width: 90vw; text-align: center;
+}
+.toast.show { opacity: 1; }
+
+.no-product { text-align: center; padding: 60px 20px; color: #aaa; }
+.no-product .ni { font-size: 52px; margin-bottom: 14px; }
 </style>
+</head>
 <body>
 
-<h2>🛒 Place Your Order</h2>
+<div class="hdr">
+  <h1>🛒 Place Your Order</h1>
+  <p>www.delightpk.shop</p>
+</div>
 
-<div id="productInfoContainer" class="product-info"></div>
+<div class="wrap" id="wrap"></div>
 
-<form id="orderForm" onsubmit="handleSubmit(event)">
-  <input type="text" name="Name" placeholder="Your Name" required>
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <p id="overlayMsg">Placing your order...</p>
+</div>
 
-  <!-- ❗ Address phone only for delivery — NOT for account -->
-  <input type="text" name="Phone" minlength="11" maxlength="11" placeholder="Phone Number" required>
-
-  <select name="province" required>
-    <option value="">Province/Region</option>
-    <option value="Sindh">Sindh</option>
-    <option value="Punjab">Punjab</option>
-    <option value="Balochistan">Balochistan</option>
-    <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
-    <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
-    <option value="Azad Kashmir">Azad Kashmir</option>
-  </select>
-
-  <input type="text" name="City" placeholder="City" required>
-  <input type="text" name="Zone" placeholder="Zone / Area" required>
-
-  <textarea name="Full_Address" placeholder="Full Address" rows="3" required></textarea>
-
-  <button type="submit">✅ Confirm Order</button>
-</form>
+<div class="toast" id="toast"></div>
 
 <script>
-// ---------------- LOGIN CHECK ----------------
-const customer = JSON.parse(localStorage.getItem("customer"));
-if(!customer){
-    alert("Please Login or Signup first!");
-    window.location.href = "login.html";
+// ── CONFIG ────────────────────────────────────────────────
+const BACKEND     = "https://delight-backend--araindaniyalo2.replit.app";
+const ADMIN_PHONE = "03133196595";
+
+// ── LOGIN CHECK ───────────────────────────────────────────
+const customer = JSON.parse(localStorage.getItem("customer") || "null");
+if (!customer) { alert("Please login first!"); window.location.href = "login.html"; }
+
+const orderProduct = JSON.parse(localStorage.getItem("orderProduct") || "null");
+const wrap = document.getElementById("wrap");
+
+// ── STATE ─────────────────────────────────────────────────
+let sellerSettings = null;   // seller ka settings (delivery charges)
+let adminSettings  = null;   // admin ka settings (easypaisa/jazzcash accounts)
+let payType        = "";     // "cod" | "advance"
+let payMethod      = "";     // "easypaisa" | "jazzcash"
+let selectedProv   = "";
+let screenshotFile = null;
+
+// ── TOAST ─────────────────────────────────────────────────
+function toast(msg, dur = 2800) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), dur);
 }
 
-// ---------------- PRODUCT DATA ----------------
-const container = document.getElementById("productInfoContainer");
-const orderProduct = JSON.parse(localStorage.getItem("orderProduct"));
+// ── BOOT ─────────────────────────────────────────────────
+if (!orderProduct) {
+  wrap.innerHTML = `<div class="no-product"><div class="ni">😕</div><p>No product selected.</p></div>`;
+} else {
+  init();
+}
 
-if(!orderProduct){
-    container.innerHTML = "<h3 style='color:red;text-align:center;'>❌ No product selected.</h3>";
-} 
-else {
-    const price = Number(orderProduct.finalPrice || orderProduct.price || 0);
-    const delivery = Number(orderProduct.delivery || 0);
-    const totalPrice = price + delivery;
+async function init() {
+  try {
+    // ── MULTI-STORE: Seller ka settings (delivery charges) ──
+    const sellerPhone = orderProduct.sellerPhone || ADMIN_PHONE;
+    const sellerR = await fetch(`${BACKEND}/settings?phone=${sellerPhone}`);
+    sellerSettings = await sellerR.json();
 
-    container.innerHTML = `
-    <div class="product-card">
-      <div class="product-title">${orderProduct.title}</div>
-      <div class="price">Rs. ${price}</div>
+    // ── ADMIN: Sirf admin ka settings (easypaisa/jazzcash) ──
+    const adminR = await fetch(`${BACKEND}/settings?phone=${ADMIN_PHONE}`);
+    adminSettings = await adminR.json();
+  } catch(e) {
+    sellerSettings = { delivery: 0, advanceDelivery: 0 };
+    adminSettings  = { easypaisa: {}, jazzcash: {} };
+  }
+  render();
+}
 
-      <div style="display:flex;align-items:center;">
-        <img src="${orderProduct.image}" 
-             style="width:90px;height:90px;border-radius:8px;object-fit:cover;margin-right:10px;">
+// ── PROVINCES ─────────────────────────────────────────────
+const PROVS = [
+  ["Punjab","🌾"], ["Sindh","🌊"], ["Khyber Pakhtunkhwa","⛰️"],
+  ["Balochistan","🏜️"], ["Gilgit-Baltistan","🏔️"], ["Azad Kashmir","🍃"]
+];
 
-        <div>
-          <div class="label">Color: ${orderProduct.selectedColor || "N/A"}</div>
-          <div class="label">Size: ${orderProduct.selectedSize || "N/A"}</div>
-          <div class="label">Delivery Charges: Rs. ${delivery}</div>
-          <div class="label"><strong>Total:</strong> Rs. ${totalPrice}</div>
-        </div>
+// ── HELPERS ───────────────────────────────────────────────
+function getPrice()  { return Number(orderProduct.finalPrice || orderProduct.price || 0); }
+function getCodDel() { return Number(sellerSettings?.delivery || 0); }
+
+// ── LOGIC: Agar seller ne advanceDelivery set ki hai tu wo use karo,
+// warna COD delivery he advance me bhi use karo ──
+function getAdvDel() {
+  const adv = Number(sellerSettings?.advanceDelivery || 0);
+  if (adv > 0) return adv;
+  return getCodDel();  // fallback: COD delivery
+}
+
+function getDel()    { return payType === "cod" ? getCodDel() : getAdvDel(); }
+function getTotal()  { return getPrice() + getDel(); }
+
+// ── RENDER ────────────────────────────────────────────────
+function render() {
+  const price  = getPrice();
+  const codDel = getCodDel();
+  const advDel = getAdvDel();
+  const total  = price + advDel; // shown in advance boxes (uses advDel)
+
+  // ── ADMIN ACCOUNTS: Sirf admin ka (03133196595) ──
+  const hasEP = !!(adminSettings?.easypaisa?.accountNumber);
+  const hasJZ = !!(adminSettings?.jazzcash?.accountNumber);
+  const hasAdvance = (hasEP || hasJZ) && advDel > 0;
+
+  wrap.innerHTML = `
+
+  <!-- PRODUCT SUMMARY -->
+  <div class="prod-card">
+    <div class="prod-card-head"><span>📦 Order Summary</span></div>
+    <div class="prod-card-body">
+      <img src="${orderProduct.image}" onerror="this.src='https://placehold.co/86x86/ffeedd/e65100?text=IMG'" alt="">
+      <div class="prod-info">
+        <div class="prod-title">${orderProduct.title}</div>
+        ${orderProduct.selectedColor ? `<div class="prod-meta">🎨 Color: ${orderProduct.selectedColor}</div>` : ""}
+        ${orderProduct.selectedSize  ? `<div class="prod-meta">📐 Size: ${orderProduct.selectedSize}</div>`  : ""}
+        <div class="prod-price">Rs. ${price.toLocaleString()}</div>
       </div>
     </div>
-    `;
+    <div class="price-chips" id="priceChips">
+      <div class="chip">Product <b>Rs. ${price.toLocaleString()}</b></div>
+      <div class="chip" id="delChip">Delivery <b>Rs. —</b></div>
+      <div class="chip-total" id="totalChip">Select payment type</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT TYPE -->
+  <div class="sec">
+    <div class="sec-title">💰 Payment Type</div>
+    <div class="sec-body">
+      <div class="pay-type-row">
+        <button class="pay-type-btn" id="codBtn" type="button" onclick="selectPayType('cod')">
+          <div class="pt-icon">🚚</div>
+          <div class="pt-lbl">Cash on Delivery</div>
+          <div class="pt-sub">Pay when you receive</div>
+        </button>
+        ${hasAdvance ? `
+        <button class="pay-type-btn" id="advBtn" type="button" onclick="selectPayType('advance')">
+          <div class="pt-icon">💳</div>
+          <div class="pt-lbl">Advance Payment</div>
+          <div class="pt-sub">Pay now to confirm</div>
+        </button>` : ""}
+      </div>
+
+      <!-- COD DELIVERY BANNER -->
+      <div class="del-banner cod-b" id="codBanner">
+        <span>🚚 COD Delivery Charges</span>
+        <span class="del-price">Rs. ${codDel.toLocaleString()}</span>
+      </div>
+
+      <!-- ADVANCE DELIVERY BANNER -->
+      ${hasAdvance ? `
+      <div class="del-banner adv-b" id="advBanner">
+        <span>⚡ Advance Delivery Charges</span>
+        <span class="del-price">Rs. ${advDel.toLocaleString()}</span>
+      </div>
+
+      <!-- PAYMENT METHOD BUTTONS -->
+      <div class="pm-row" id="pmRow" style="display:none">
+        ${hasEP ? `<button class="pm-btn" id="epBtn" type="button" onclick="selectPayMethod('easypaisa')">
+          <div class="pm-ic">💚</div>
+          <div class="pm-nm">Easypaisa</div>
+        </button>` : ""}
+        ${hasJZ ? `<button class="pm-btn" id="jzBtn" type="button" onclick="selectPayMethod('jazzcash')">
+          <div class="pm-ic">❤️</div>
+          <div class="pm-nm">JazzCash</div>
+        </button>` : ""}
+      </div>
+
+      <!-- EASYPAISA BOX -->
+      ${hasEP ? `
+      <div class="acct-box" id="epBox">
+        <div class="send-amt">Send: Rs. ${total.toLocaleString()}</div>
+        <div class="acct-top">
+          <div>
+            <div class="acct-lbl">Easypaisa Account</div>
+            <div class="acct-lbl">👉 Raast Till Payment</div>
+            <div class="acct-num" id="epNum">${adminSettings.easypaisa.accountNumber}</div>
+            ${adminSettings.easypaisa.businessName ? `<div class="acct-name">${adminSettings.easypaisa.businessName}</div>` : ""}
+          </div>
+          <button class="copy-btn" onclick="copyNum('epNum')">📋 Copy</button>
+        </div>
+        ${adminSettings.easypaisa.qrCode ? `<img src="${adminSettings.easypaisa.qrCode}" class="qr-img" alt="QR Code">` : ""}
+      </div>` : ""}
+
+      <!-- JAZZCASH BOX -->
+      ${hasJZ ? `
+      <div class="acct-box" id="jzBox">
+        <div class="send-amt">Send: Rs. ${total.toLocaleString()}</div>
+        <div class="acct-top">
+          <div>
+            <div class="acct-lbl">JazzCash Account</div>
+            <div class="acct-lbl">👉 Raast Till Payment</div>
+            <div class="acct-num" id="jzNum">${adminSettings.jazzcash.accountNumber}</div>
+            ${adminSettings.jazzcash.businessName ? `<div class="acct-name">${adminSettings.jazzcash.businessName}</div>` : ""}
+          </div>
+          <button class="copy-btn" onclick="copyNum('jzNum')">📋 Copy</button>
+        </div>
+        ${adminSettings.jazzcash.qrCode ? `<img src="${adminSettings.jazzcash.qrCode}" class="qr-img" alt="QR Code">` : ""}
+      </div>` : ""}
+
+      <!-- SCREENSHOT UPLOAD -->
+      <div id="ssSection" style="display:none">
+        <label class="ss-label" for="ssInput">
+          <span class="ss-icon">📸</span>
+          <span class="ss-txt">Upload Payment Screenshot</span>
+          <span class="ss-sub">Tap to choose image</span>
+        </label>
+        <input type="file" id="ssInput" accept="image/*" onchange="handleSS(this)">
+        <img id="ssPreview" src="" alt="preview">
+      </div>
+      ` : ""}
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="order-total" id="orderTotal">
+    <div>
+      <div class="ot-label">Total Price</div>
+      <div class="ot-label" id="totalType" style="font-size:11px; margin-top:2px;"></div>
+    </div>
+    <div class="ot-amount" id="totalAmt"></div>
+  </div>
+
+  <!-- DELIVERY DETAILS -->
+  <div class="sec">
+    <div class="sec-title">📋 Delivery Details</div>
+    <div class="sec-body">
+
+      <div class="field">
+        <label>Your Name *</label>
+        <input type="text" id="fName" placeholder="Full Name">
+      </div>
+
+      <div class="field">
+        <label>Phone Number *</label>
+        <input type="tel" id="fPhone" placeholder="03xxxxxxxxx" maxlength="11" inputmode="numeric">
+      </div>
+
+      <div class="field">
+        <label>Province / Region *</label>
+        <button type="button" class="prov-btn" id="provBtn" onclick="toggleProv()">
+          <span id="provLbl">Select Province</span>
+          <span class="prov-arrow">▼</span>
+        </button>
+        <div class="prov-dd" id="provDd">
+          ${PROVS.map(([n,ic]) => `
+            <div class="prov-opt" onclick="pickProv('${n}')" data-name="${n}">
+              <span>${ic}</span>${n}
+            </div>`).join("")}
+        </div>
+      </div>
+
+      <div class="field">
+        <label>City *</label>
+        <input type="text" id="fCity" placeholder="Lahore, Karachi, Peshawar...">
+      </div>
+
+      <div class="field">
+        <label>Area / Zone *</label>
+        <input type="text" id="fZone" placeholder="e.g: DHA, Saddar...">
+      </div>
+
+      <div class="field">
+        <label>Full Address *</label>
+        <textarea id="fAddr" rows="3" placeholder="Full address..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+    ✅ Confirm Order
+  </button>
+  <div style="height:20px"></div>
+  `;
 }
 
-// ---------------- HANDLE ORDER SUBMIT ----------------
-async function handleSubmit(e){
-    e.preventDefault();
+// ── PAY TYPE ──────────────────────────────────────────────
+function selectPayType(type) {
+  payType   = type;
+  payMethod = "";
+  screenshotFile = null;
 
-    const form = document.getElementById("orderForm");
-    const button = form.querySelector("button");
+  const price  = getPrice();
+  const del    = type === "cod" ? getCodDel() : getAdvDel();
+  const total  = price + del;
 
-    button.disabled = true;
-    button.innerText = "⏳ Sending...";
+  // Buttons
+  const codBtn = document.getElementById("codBtn");
+  const advBtn = document.getElementById("advBtn");
+  if (codBtn) codBtn.classList.toggle("sel-cod", type === "cod");
+  if (advBtn) advBtn.classList.toggle("sel-adv", type === "advance");
 
-    const formData = new FormData(form);
-    const userData = Object.fromEntries(formData.entries());
+  // Delivery banners
+  const codB = document.getElementById("codBanner");
+  const advB = document.getElementById("advBanner");
+  if (codB) codB.classList.toggle("show", type === "cod");
+  if (advB) advB.classList.toggle("show", type === "advance");
 
-    const price = Number(orderProduct.finalPrice || orderProduct.price || 0);
-    const delivery = Number(orderProduct.delivery || 0);
+  // Advance method row
+  const pmRow = document.getElementById("pmRow");
+  if (pmRow) pmRow.style.display = type === "advance" ? "flex" : "none";
 
-    const orderData = {
-        Productid: customer.phone,
-        buyerName: userData.Name,
-        buyerPhone: customer.phone,
-        addressPhone: userData.Phone,
-        address: `${userData.province}, ${userData.City}, ${userData.Zone}, ${userData.Full_Address}`,
-        product: {
-            title: orderProduct.title,
-            price: price,
-            color: orderProduct.selectedColor || "N/A",
-            size: orderProduct.selectedSize || "N/A",
-            image: orderProduct.image,
-            delivery: delivery,
-            description: orderProduct.description || "",
-        },
-        sellerPhone: orderProduct.sellerPhone
-    };
+  // Hide account boxes
+  ["epBox","jzBox","ssSection"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove("show"); el.style.display = "none"; }
+  });
+  document.getElementById("epBtn")?.classList.remove("sel-ep");
+  document.getElementById("jzBtn")?.classList.remove("sel-jz");
+  const ssP = document.getElementById("ssPreview");
+  if (ssP) ssP.style.display = "none";
 
-    console.log("FINAL ORDER DATA:", orderData);
+  // Price chips
+  document.getElementById("delChip").innerHTML  = `Delivery <b>Rs. ${del.toLocaleString()}</b>`;
+  document.getElementById("totalChip").textContent = `Total  Rs. ${total.toLocaleString()}`;
 
-    try{
-        const response = await fetch("https://delight-backend--araindaniyalo2.replit.app/place-order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(orderData)
-        });
+  // Order total box
+  const ot = document.getElementById("orderTotal");
+  ot.classList.add("show");
+  document.getElementById("totalAmt").textContent = `Rs. ${total.toLocaleString()}`;
+  document.getElementById("totalType").textContent =
+    type === "cod" ? "(Cash on Delivery)" : "(Advance Payment)";
+}
 
-        const resData = await response.json();
-        if(response.ok){
-            // ✅ Order success → form clear + redirect
-            form.reset();
-            window.location.href = "thanks.html";
-        } else {
-            alert("❌ Failed: " + resData.message);
-        }
+// ── PAY METHOD ────────────────────────────────────────────
+function selectPayMethod(method) {
+  payMethod = method;
+
+  const epBtn     = document.getElementById("epBtn");
+  const jzBtn     = document.getElementById("jzBtn");
+  const epBox     = document.getElementById("epBox");
+  const jzBox     = document.getElementById("jzBox");
+  const ssSection = document.getElementById("ssSection");
+
+  epBtn?.classList.remove("sel-ep");
+  jzBtn?.classList.remove("sel-jz");
+  if (epBox) { epBox.classList.remove("show"); epBox.style.display = "none"; }
+  if (jzBox) { jzBox.classList.remove("show"); jzBox.style.display = "none"; }
+
+  if (method === "easypaisa" && epBox) {
+    epBtn?.classList.add("sel-ep");
+    epBox.classList.add("show"); epBox.style.display = "block";
+  } else if (method === "jazzcash" && jzBox) {
+    jzBtn?.classList.add("sel-jz");
+    jzBox.classList.add("show"); jzBox.style.display = "block";
+  }
+
+  if (ssSection) ssSection.style.display = "block";
+}
+
+// ── PROVINCE ──────────────────────────────────────────────
+function toggleProv() {
+  document.getElementById("provBtn").classList.toggle("open");
+  document.getElementById("provDd").classList.toggle("show");
+}
+function pickProv(name) {
+  selectedProv = name;
+  document.getElementById("provLbl").textContent = name;
+  document.getElementById("provBtn").classList.remove("open");
+  document.getElementById("provDd").classList.remove("show");
+  document.querySelectorAll(".prov-opt").forEach(el =>
+    el.classList.toggle("active", el.dataset.name === name)
+  );
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest(".prov-btn") && !e.target.closest(".prov-dd")) {
+    document.getElementById("provBtn")?.classList.remove("open");
+    document.getElementById("provDd")?.classList.remove("show");
+  }
+});
+
+// ── COPY ──────────────────────────────────────────────────
+function copyNum(id) {
+  const txt = document.getElementById(id)?.textContent?.trim();
+  if (!txt) return;
+  navigator.clipboard.writeText(txt)
+    .then(() => toast("✅ Number copied!"))
+    .catch(() => {
+      const ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+      toast("✅ Number copied!");
+    });
+}
+
+// ── SCREENSHOT ────────────────────────────────────────────
+function handleSS(input) {
+  const file = input.files[0]; if (!file) return;
+  screenshotFile = file;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = document.getElementById("ssPreview");
+    img.src = e.target.result; img.style.display = "block";
+  };
+  r.readAsDataURL(file);
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+async function handleSubmit() {
+  const name  = document.getElementById("fName")?.value?.trim();
+  const phone = document.getElementById("fPhone")?.value?.trim();
+  const city  = document.getElementById("fCity")?.value?.trim();
+  const zone  = document.getElementById("fZone")?.value?.trim();
+  const addr  = document.getElementById("fAddr")?.value?.trim();
+
+  // ── VALIDATION ──
+  if (!payType)                        return toast("⚠️ Please select a payment type");
+  if (!name)                           return toast("⚠️ Please enter your name");
+  if (!phone || phone.length < 11)     return toast("⚠️ Please enter a valid 11-digit phone number");
+  if (!selectedProv)                   return toast("⚠️ Please select a province");
+  if (!city)                           return toast("⚠️ Please enter your city");
+  if (!zone)                           return toast("⚠️ Please enter your area/zone");
+  if (!addr)                           return toast("⚠️ Please enter your full address");
+  if (payType === "advance") {
+    if (!payMethod)                    return toast("⚠️ Please select Easypaisa or JazzCash");
+    if (!screenshotFile)               return toast("⚠️ Please upload payment screenshot");
+  }
+
+  // ── CALCULATE TOTALS ──
+  const price  = getPrice();
+  const del    = getDel();
+  const total  = price + del;
+
+  // ── BUILD ORDER PAYLOAD ──
+  const orderData = {
+    buyerName:    name,
+    buyerPhone:   customer.phone,   // account phone (logged-in user)
+    addressPhone: phone,            // delivery contact number
+    address:      `${selectedProv}, ${city}, ${zone}, ${addr}`,
+    product: {
+      title:       orderProduct.title,
+      price:       price,
+      color:       orderProduct.selectedColor || "N/A",
+      size:        orderProduct.selectedSize  || "N/A",
+      image:       orderProduct.image,
+      delivery:    del,
+      description: orderProduct.description || "",
+    },
+    sellerPhone: orderProduct.sellerPhone || ADMIN_PHONE,
+  };
+
+  // ── SHOW LOADER ──
+  const overlay   = document.getElementById("overlay");
+  const overlayMsg = document.getElementById("overlayMsg");
+  const submitBtn = document.getElementById("submitBtn");
+  overlay.classList.add("show");
+  submitBtn.disabled = true;
+
+  try {
+    // ── STEP 1: Place order ──
+    overlayMsg.textContent = "Placing your order...";
+    const res  = await fetch(`${BACKEND}/place-order`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(orderData),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || "Order failed");
+
+    const orderId = json.order?.id || json.orderId || json.id || Date.now();
+
+    // ── STEP 2: Submit advance payment proof ──
+    if (payType === "advance" && screenshotFile) {
+      overlayMsg.textContent = "Uploading payment proof...";
+
+      const transactionId = `SS-${Date.now()}-${Math.floor(Math.random() * 9000 + 1000)}`;
+
+      const fd = new FormData();
+      fd.append("buyerName",     name);
+      fd.append("buyerPhone",    customer.phone);
+      fd.append("sellerPhone",   orderProduct.sellerPhone || ADMIN_PHONE);
+      fd.append("orderId",       String(orderId));
+      fd.append("amount",        String(total));
+      fd.append("paymentMethod", payMethod);
+      fd.append("transactionId", transactionId);
+      fd.append("screenshot",    screenshotFile);
+
+      const payRes  = await fetch(`${BACKEND}/payment/submit`, { method: "POST", body: fd });
+      const payJson = await payRes.json();
+
+      if (!payRes.ok) throw new Error(payJson.message || "Payment proof upload failed");
     }
-    catch(err){
-        alert("❌ Error: " + err.message);
-    }
 
-    button.disabled = false;
-    button.innerText = "✅ Confirm Order";
+    // ── STEP 3: Redirect ──
+    overlay.classList.remove("show");
+    window.location.href = "thanks.html";
+
+  } catch(err) {
+    overlay.classList.remove("show");
+    submitBtn.disabled = false;
+    toast("❌ Error: " + err.message, 4000);
+  }
 }
 </script>
+
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 </script>
 </body>
 </html>
