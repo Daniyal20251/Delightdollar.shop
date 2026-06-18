@@ -724,7 +724,7 @@ async function handleSubmit() {
     address:      `${selectedProv}, ${city}, ${zone}, ${addr}`,
     product: {
       title:       orderProduct.title,
-      price:       price,
+      price:       payType === "advance" ? 0 : itemPrice,    
       color:       orderProduct.selectedColor || "N/A",
       size:        orderProduct.selectedSize  || "N/A",
       image:       orderProduct.image,
