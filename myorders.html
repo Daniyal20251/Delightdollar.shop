@@ -233,12 +233,14 @@ async function loadOrders(){
       products.forEach(p => {
         if (!p) return;
         const img = p.image || (p.images && p.images[0]) || 'no-img.jpg';
+        // BUG FIX: backend se field "qty" aati hai, "quantity" nahi — dono check karte hain
+        const qty = p.qty || p.quantity || 1;
         const productBox = document.createElement("div");
         productBox.className = "product-box";
         productBox.innerHTML = `<img src="${img}" alt="Product"><div>
           <p><strong>${p.title || p.name || 'Product'}</strong></p>
           <p>Price: Rs ${p.price ?? p.total ?? 'N/A'}</p>
-          ${p.quantity ? `<div class="small-muted">Qty: ${p.quantity}</div>` : ''}
+          <div class="small-muted">Qty: ${qty}</div>
         </div>`;
         // Click disabled
         productBox.onclick = () => {};

@@ -183,6 +183,17 @@
 </head>
 <body>
 
+  <!-- ===== APP SPLASH SCREEN ===== -->
+  <div id="appSplash">
+    <div class="splash-glow"></div>
+    <div class="splash-icon">
+      <img src="Delight icons/D-mark-clean.png" alt="Delight PK" fetchpriority="high">
+    </div>
+    <div class="splash-title">Delight PK</div>
+    <p class="splash-subtitle">ONLINE&nbsp;&nbsp;SHOPPING</p>
+    <div class="splash-dots"><span></span><span></span><span></span></div>
+  </div>
+
   <!-- ===== HEADER ===== -->
   <header class="main-header" role="banner" aria-label="Delightpk Header">
     <div class="header-left">
@@ -322,6 +333,27 @@
   <!-- ===== SCRIPTS ===== -->
   <script src="index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- ===== HIDE APP SPLASH ===== -->
+  <script>
+    (function () {
+      const MIN_SHOW_MS = 700; // splash kam se kam itni der dikhay
+      const shownAt = Date.now();
+      function hideSplash() {
+        const el = document.getElementById('appSplash');
+        if (!el) return;
+        const wait = Math.max(0, MIN_SHOW_MS - (Date.now() - shownAt));
+        setTimeout(() => {
+          el.classList.add('splash-hide');
+          setTimeout(() => el.remove(), 550);
+        }, wait);
+      }
+      if (document.readyState === 'complete') hideSplash();
+      else window.addEventListener('load', hideSplash);
+      // safety fallback agar load event slow ho
+      setTimeout(hideSplash, 4000);
+    })();
+  </script>
 
   <!-- ===== PWA: Service Worker + Install Banner ===== -->
   <script>
