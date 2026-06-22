@@ -610,7 +610,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const customer = JSON.parse(localStorage.getItem("customer"));
     if (!customer) {
       alert("Please login to write a review");
-      window.location.href = "Stores Login.html";
+      const phone = item.sellerPhone || "";
+      window.location.href = phone 
+        ? `Stores Login.html?phone=${encodeURIComponent(phone)}` 
+        : "Stores Login.html";
       return;
     }
     const modal = document.getElementById("reviewModalDaraz");
@@ -989,13 +992,15 @@ function setupWhatsAppButton() {
     openDelightChat();
   };
 }
-
 window.openDelightChat = function() {
   const customer = JSON.parse(localStorage.getItem("customer"));
   if (!customer) {
     alert("Please login to chat with seller");
-    window.location.href = "Stores Login.html";
-    return;
+    const phone = item.sellerPhone || "";
+    window.location.href = phone 
+      ? `Stores Login.html?phone=${encodeURIComponent(phone)}` 
+      : "Stores Login.html";
+    return;  // ← yeh return bhi missing tha!
   }
   if (!item || !item.sellerPhone) {
     alert("Seller information not available");
