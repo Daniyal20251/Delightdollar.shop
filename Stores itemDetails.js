@@ -610,7 +610,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const customer = JSON.parse(localStorage.getItem("customer"));
     if (!customer) {
       alert("Please login to write a review");
-      window.location.href = "login.html";
+      window.location.href = "Stores Login.html";
       return;
     }
     const modal = document.getElementById("reviewModalDaraz");
@@ -994,7 +994,7 @@ window.openDelightChat = function() {
   const customer = JSON.parse(localStorage.getItem("customer"));
   if (!customer) {
     alert("Please login to chat with seller");
-    window.location.href = "login.html";
+    window.location.href = "Stores Login.html";
     return;
   }
   if (!item || !item.sellerPhone) {
