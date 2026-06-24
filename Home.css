@@ -76,8 +76,26 @@ body {
   color: white;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  width: 130px;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #fff 12%, #fff 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #fff 12%, #fff 88%, transparent 100%);
+  flex-shrink: 1;
+  transition: max-width 0.35s ease, opacity 0.35s ease;
 }
-.brand-name span { color: rgba(255,255,255,0.85); }
+
+.brand-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: brandMarquee 5s linear infinite;
+}
+.brand-marquee .pk { color: rgba(255,255,255,0.75); }
+@keyframes brandMarquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
 .brand-link {
   text-decoration: none;
@@ -387,9 +405,24 @@ body {
 .swiper-slide { border-radius: var(--radius-md); overflow: hidden; }
 
 .swiper-slide img {
-  width: 100%; height: 175px;
+  width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   transition: transform 0.5s ease;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .swiper.mySwiper { height: 300px; width: calc(100% - 48px); margin: 16px 24px 0; }
+  .ads-skeleton { padding: 16px 24px 0; }
+  .skeleton-ad { height: 300px; }
+}
+/* Desktop */
+@media (min-width: 1024px) {
+  .swiper.mySwiper { height: 420px; max-width: 1200px; margin: 20px auto 0; border-radius: 20px; }
+  .ads-skeleton { max-width: 1200px; margin: 0 auto; padding: 20px 0 0; }
+  .skeleton-ad { height: 420px; border-radius: 20px; }
 }
 
 .swiper-slide-active img { transform: scale(1.04); }
@@ -553,20 +586,7 @@ body {
   margin-top: 4px;
 }
 
-/* ============================================
-   ALL PRODUCTS HEADER
-   ============================================ */
-.products-section-header {
-  padding: 14px 14px 6px;
-  display: flex; align-items: center;
-}
 
-.products-section-header .section-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 15px; font-weight: 800;
-  display: flex; align-items: center; gap: 6px;
-  color: var(--text-dark);
-}
 
 /* ============================================
    PRODUCT GRID
@@ -724,3 +744,532 @@ body {
   background: var(--primary-light); color: var(--primary);
   padding: 5px 14px; border-radius: 20px; cursor: pointer;
 }
+/* ============================================
+   HEADER — ANIMATED + SEARCH EXPAND
+   ============================================ */
+.main-header {
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+}
+
+/* Shimmer strip */
+.main-header::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; bottom: 0;
+  width: 60%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: hdrShimmer 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes hdrShimmer {
+  0%   { left: -60%; }
+  100% { left: 160%; }
+}
+
+/* Logo spin — 1 full circle then pause */
+.logo-wrap img {
+  animation: logoSpin 6s ease-in-out infinite;
+}
+@keyframes logoSpin {
+  0%   { transform: rotate(0deg); }
+  15%  { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Brand name fade-in */
+.brand-name {
+  animation: brandIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+}
+@keyframes brandIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* header-right expands to fill on search-active */
+.header-right {
+  flex: 1;
+  max-width: 220px;
+  margin-left: 10px;
+  transition: max-width 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* When search active */
+.main-header.search-active .header-right { max-width: 100%; }
+.main-header.search-active .brand-name  { max-width: 0; width: 0; opacity: 0; overflow: hidden; margin: 0; padding: 0; transition: all 0.3s ease; }
+.main-header.search-active .logo-wrap   { width: 0; opacity: 0; overflow: hidden; padding: 0; margin: 0; transition: all 0.3s ease; }
+.main-header.search-active .header-left { gap: 0; }
+
+/* Back arrow — hidden by default */
+.search-back-btn {
+  display: none;
+  background: none; border: none;
+  color: var(--primary); font-size: 15px;
+  cursor: pointer; padding: 0 2px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.search-back-btn:active { transform: scale(0.85); }
+.main-header.search-active .search-back-btn { display: flex; align-items: center; }
+.main-header.search-active .search-icon     { display: none; }
+
+/* Animated placeholder */
+.search-ph-anim {
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #bbb;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: 'Nunito', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.search-ph-anim::after {
+  content: '|';
+  color: var(--primary);
+  margin-left: 1px;
+  animation: cursorBlink 0.8s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ============================================
+   FLASH SALE HEADING — animated
+   ============================================ */
+.flash-title {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 16px; font-weight: 900;
+}
+
+
+
+/* ── Pure CSS Animated Flame ── */
+.fire-icon {
+  position: relative;
+  width: 22px; height: 28px;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Main outer flame */
+.fire-icon::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 18px; height: 24px;
+  background: radial-gradient(ellipse at 50% 100%, #ff2200 0%, #ff6600 40%, #ffaa00 70%, #ffdd00 100%);
+  border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+  animation: flameBurn 0.6s ease-in-out infinite alternate;
+  filter: blur(0.4px);
+  transform-origin: bottom center;
+}
+
+/* Inner bright core */
+.fire-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 50%;
+  transform: translateX(-50%);
+  width: 9px; height: 14px;
+  background: radial-gradient(ellipse at 50% 100%, #fff5a0 0%, #ffdd00 40%, #ff8800 100%);
+  border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+  animation: flameCoreburn 0.5s ease-in-out infinite alternate-reverse;
+  filter: blur(0.3px);
+  transform-origin: bottom center;
+}
+
+@keyframes flameBurn {
+  0%   { transform: translateX(-50%) scaleX(1)   scaleY(1)    rotate(-3deg); }
+  25%  { transform: translateX(-50%) scaleX(0.88) scaleY(1.08) rotate(2deg); }
+  50%  { transform: translateX(-50%) scaleX(1.06) scaleY(0.95) rotate(-2deg); }
+  75%  { transform: translateX(-50%) scaleX(0.92) scaleY(1.06) rotate(3deg); }
+  100% { transform: translateX(-50%) scaleX(1)   scaleY(1.02) rotate(-1deg); }
+}
+
+@keyframes flameCoreburn {
+  0%   { transform: translateX(-50%) scaleX(1)    scaleY(1)    rotate(2deg); }
+  33%  { transform: translateX(-50%) scaleX(0.82) scaleY(1.12) rotate(-3deg); }
+  66%  { transform: translateX(-50%) scaleX(1.1)  scaleY(0.9)  rotate(2deg); }
+  100% { transform: translateX(-50%) scaleX(0.9)  scaleY(1.05) rotate(-1deg); }
+}
+
+/* Glow underneath the flame */
+.fire-glow {
+  position: absolute;
+  bottom: -2px; left: 50%;
+  transform: translateX(-50%);
+  width: 22px; height: 6px;
+  background: radial-gradient(ellipse, rgba(255,100,0,0.7) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 0.6s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+  from { opacity: 0.6; transform: translateX(-50%) scaleX(1); }
+  to   { opacity: 1;   transform: translateX(-50%) scaleX(1.3); }
+}
+
+/* Floating sparks */
+.fire-spark {
+  position: absolute;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: #ffdd00;
+  opacity: 0;
+  pointer-events: none;
+}
+.fire-spark-1 {
+  bottom: 18px; left: 2px;
+  animation: spark1 1.1s ease-out infinite;
+  animation-delay: 0.1s;
+}
+.fire-spark-2 {
+  bottom: 16px; right: 2px;
+  width: 2px; height: 2px;
+  background: #ff8800;
+  animation: spark2 0.9s ease-out infinite;
+  animation-delay: 0.45s;
+}
+.fire-spark-3 {
+  bottom: 20px; left: 50%;
+  width: 2px; height: 2px;
+  background: #fff;
+  animation: spark1 1.3s ease-out infinite;
+  animation-delay: 0.7s;
+}
+@keyframes spark1 {
+  0%   { opacity: 0;   transform: translate(0, 0) scale(1); }
+  20%  { opacity: 1; }
+  100% { opacity: 0;   transform: translate(-4px, -14px) scale(0.3); }
+}
+@keyframes spark2 {
+  0%   { opacity: 0;   transform: translate(0, 0) scale(1); }
+  20%  { opacity: 0.9; }
+  100% { opacity: 0;   transform: translate(5px, -12px) scale(0.2); }
+}
+
+.flash-text {
+  background: linear-gradient(90deg, #ff3c00, #ff7b00, #ffb700, #ff3c00);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: flashMove 2.2s linear infinite;
+}
+@keyframes flashMove {
+  0%   { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+
+.live-badge {
+  background: linear-gradient(135deg, #ff3c00, #ff7b00) !important;
+  -webkit-text-fill-color: white !important;
+  box-shadow: 0 2px 8px rgba(255,60,0,0.4);
+  animation: livePulse 1.2s ease-in-out infinite !important;
+}
+@keyframes livePulse {
+  0%,100% { transform: scale(1);    box-shadow: 0 2px 8px rgba(255,60,0,0.4); }
+  50%     { transform: scale(1.08); box-shadow: 0 2px 16px rgba(255,60,0,0.7); }
+}
+
+/* ============================================
+   ALL PRODUCTS HEADER — animated
+   ============================================ */
+.products-section-header {
+  padding: 16px 14px 10px;
+  display: flex; align-items: center;
+}
+
+.products-section-header .section-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px; font-weight: 900;
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-dark);
+  position: relative;
+}
+
+.products-section-header .section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), #ffb700, var(--primary));
+  background-size: 200% auto;
+  border-radius: 4px;
+  animation: underlineSlide 2.5s linear infinite;
+}
+@keyframes underlineSlide {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.all-word { color: var(--primary); }
+
+.bag-anim {
+  display: inline-block;
+  animation: bagBounce 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(255,107,0,0.4));
+}
+@keyframes bagBounce {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  20%     { transform: translateY(-4px) rotate(-8deg); }
+  40%     { transform: translateY(0) rotate(5deg); }
+  60%     { transform: translateY(-2px) rotate(-3deg); }
+  80%     { transform: translateY(0) rotate(2deg); }
+}
+
+/* ============================================
+   RECENTLY VIEWED — DARK GLASS REDESIGN
+   ============================================ */
+.rv-block {
+  margin: 10px 12px 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(92,92,170,0.3);
+  border: 1px solid rgba(123,108,246,0.2);
+  position: relative;
+  animation: rvReveal 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes rvReveal {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* floating sparkles */
+.rv-star {
+  position: absolute; pointer-events: none;
+  font-size: 14px; opacity: 0.15;
+  animation: starFloat 4s ease-in-out infinite;
+}
+.rv-star-1 { top: 10px; right: 90px;  animation-delay: 0s; }
+.rv-star-2 { top: 14px; right: 56px;  animation-delay: 0.9s; font-size: 10px; }
+.rv-star-3 { top: 10px; right: 128px; animation-delay: 1.6s; font-size: 11px; }
+@keyframes starFloat {
+  0%,100% { transform: translateY(0) rotate(0deg);   opacity: 0.15; }
+  50%     { transform: translateY(-5px) rotate(15deg); opacity: 0.3; }
+}
+
+.rv-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 13px 14px 9px;
+  position: relative; z-index: 1;
+}
+
+.rv-title-wrap {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.rv-eye {
+  font-size: 20px;
+  display: inline-block;
+  animation: eyeWiggle 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(123,108,246,0.8));
+}
+@keyframes eyeWiggle {
+  0%,100% { transform: scale(1) rotate(0deg); }
+  20%     { transform: scale(1.2) rotate(-8deg); }
+  50%     { transform: scale(0.9) rotate(5deg); }
+  80%     { transform: scale(1.05) rotate(-2deg); }
+}
+
+.rv-title-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px; font-weight: 800;
+  background: linear-gradient(90deg, #a78bfa, #818cf8, #c4b5fd);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 2.5s linear infinite;
+}
+@keyframes titleShimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.rv-badge {
+  background: linear-gradient(135deg, #7b6cf6, #a78bfa);
+  color: white; -webkit-text-fill-color: white;
+  font-size: 10px; font-weight: 900;
+  padding: 3px 9px; border-radius: 20px;
+  display: none;
+  box-shadow: 0 2px 8px rgba(123,108,246,0.5);
+  animation: badgePop 2s ease-in-out infinite;
+}
+.rv-badge.show { display: inline-block; }
+@keyframes badgePop {
+  0%,100% { box-shadow: 0 2px 8px rgba(123,108,246,0.5); }
+  50%     { box-shadow: 0 2px 18px rgba(123,108,246,0.9); }
+}
+
+.rv-clear-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.55);
+  font-size: 11px;
+  width: 30px; height: 30px;
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s ease;
+}
+.rv-clear-btn:hover {
+  background: rgba(239,68,68,0.2);
+  border-color: rgba(239,68,68,0.45);
+  color: #fca5a5;
+  transform: scale(1.1) rotate(10deg);
+}
+
+.rv-grid {
+  display: flex; gap: 10px;
+  overflow-x: auto; padding: 4px 14px 16px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  position: relative; z-index: 1;
+}
+.rv-grid::-webkit-scrollbar { display: none; }
+
+.rv-card {
+  position: relative;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.11);
+  border-radius: 12px;
+  width: 128px; flex-shrink: 0;
+  overflow: hidden; cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+  animation: rvCardPop 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes rvCardPop {
+  from { opacity: 0; transform: scale(0.7) translateY(14px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.rv-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 12px 30px rgba(123,108,246,0.35);
+  border-color: rgba(167,139,250,0.45);
+}
+.rv-card:active { transform: scale(0.96); }
+
+.rv-card img {
+  width: 100%; height: 100px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.rv-card:hover img { transform: scale(1.08); }
+
+.rv-card-body { padding: 6px 8px 8px; }
+
+.rv-card-title {
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.rv-card-price {
+  background: linear-gradient(90deg, #a78bfa, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 12px; font-weight: 900;
+}
+
+.rv-card-old {
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.3);
+  -webkit-text-fill-color: rgba(255,255,255,0.3);
+  text-decoration: line-through;
+  font-weight: 600;
+  margin-left: 3px;
+}
+
+.rv-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 8px; height: 8px;
+  background: #a78bfa; border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(167,139,250,0.7);
+  animation: dotGlow 1.8s ease-in-out infinite;
+}
+@keyframes dotGlow {
+  0%,100% { box-shadow: 0 0 6px 2px rgba(167,139,250,0.7); }
+  50%     { box-shadow: 0 0 12px 4px rgba(167,139,250,1); }
+}
+
+/* ============================================
+   WHATSAPP FLOATING BUTTON
+   ============================================ */
+.wa-btn {
+  position: fixed;
+  bottom: 90px; right: 16px;
+  z-index: 9990;
+  width: 45px; height: 45px;
+  background: linear-gradient(135deg, #25d366, #128c5e);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+  text-decoration: none;
+  opacity: 0; transform: scale(0) rotate(-90deg);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+.wa-btn.visible {
+  opacity: 1; transform: scale(1) rotate(0deg);
+  pointer-events: auto;
+}
+.wa-btn:hover { filter: brightness(1.08); }
+.wa-btn:active { filter: brightness(0.9); }
+
+.wa-icon { width: 30px; height: 30px; position: relative; z-index: 2; }
+.wa-icon svg { width: 30px; height: 30px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2)); }
+
+.wa-ring {
+  position: absolute;
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 2.5px solid rgba(37,211,102,0.55);
+  animation: waRing 2s ease-out infinite;
+  pointer-events: none;
+}
+.wa-ring-2 { animation-delay: 0.7s; }
+@keyframes waRing {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.wa-tip {
+  position: absolute;
+  right: 66px; top: 50%;
+  transform: translateY(-50%);
+  background: rgba(18,140,94,0.95);
+  color: white; -webkit-text-fill-color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 800;
+  padding: 6px 12px; border-radius: 20px;
+  white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+.wa-tip::after {
+  content: '';
+  position: absolute;
+  right: -5px; top: 50%; transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: rgba(18,140,94,0.95);
+  border-right: none;
+}
+.wa-btn:hover .wa-tip { opacity: 1; right: 62px; }

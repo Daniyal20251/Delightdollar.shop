@@ -180,24 +180,66 @@
   }
   </script>
 
+
+  <!-- ===== FACEBOOK PIXEL ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- ===== END FACEBOOK PIXEL ===== -->
+
+  <!-- ===== WHATSAPP CLICK TRACKING ===== -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // WhatsApp links par click tracking
+    document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if(typeof fbq !== 'undefined') {
+          fbq('track', 'Contact', {contact_method: 'WhatsApp'});
+        }
+      });
+    });
+  });
+  </script>
+  <!-- ===== END WHATSAPP TRACKING ===== -->
 </head>
 <body>
+  <!-- ===== PAGE EVENT ===== -->
+  <script>
+  fbq('track', 'ViewContent', {content_name: 'Homepage', content_category: 'Home'});
+  </script>
+
 
   <!-- ===== HEADER ===== -->
-  <header class="main-header" role="banner" aria-label="Delightpk Header">
-    <div class="header-left">
+  <header class="main-header" id="mainHeader" role="banner" aria-label="Delightpk Header">
+    <div class="header-left" id="headerLeft">
       <div class="logo-wrap">
-        <img src="Delight icons/Delightpk.png" width="36" height="36" alt="Delightpk - Online Shopping Pakistan" fetchpriority="high">
+        <img src="Delight icons/Delightpk.png" id="logoImg" width="36" height="36" alt="Delightpk - Online Shopping Pakistan" fetchpriority="high">
       </div>
       <a href="/" class="brand-link" aria-label="Delightpk Home">
-        <h1 class="brand-name">Delight<span>pk</span></h1>
+        <h1 class="brand-name" id="brandName"><span class="brand-marquee">Delight<span class="pk">pk</span>&nbsp;&nbsp;•&nbsp;&nbsp;Delight<span class="pk">pk</span>&nbsp;&nbsp;•&nbsp;&nbsp;</span></h1>
       </a>
     </div>
-    <div class="header-right">
+    <div class="header-right" id="headerRight">
       <div class="search-wrap" id="searchWrap">
         <div class="search-input-box">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+          <button class="search-back-btn" id="searchBackBtn"><i class="fas fa-arrow-left"></i></button>
+          <i class="fas fa-search search-icon" id="searchIconEl"></i>
+          <div style="position:relative;flex:1;display:flex;align-items:center;">
+            <input type="text" id="searchInput" class="search-input" placeholder="" autocomplete="off">
+            <span class="search-ph-anim" id="searchPhAnim"></span>
+          </div>
           <button class="search-clear-btn" id="searchClearBtn" style="display:none;"><i class="fas fa-times"></i></button>
         </div>
       </div>
@@ -280,23 +322,19 @@
   <section class="section-block" id="flashSaleBox" aria-label="Flash Sale" style="display:none;">
     <div class="section-header">
       <div class="section-title flash-title">
-        <span class="fire-icon">🔥</span> Flash Sale
+        <span class="fire-icon">
+          <span class="fire-glow"></span>
+          <span class="fire-spark fire-spark-1"></span>
+          <span class="fire-spark fire-spark-2"></span>
+          <span class="fire-spark fire-spark-3"></span>
+        </span>
+        <span class="flash-text">Flash Sale</span>
         <span class="live-badge">LIVE</span>
       </div>
       <a class="see-all-btn" href="#">See All</a>
     </div>
     <div id="flashSaleContainer" class="flash-sale-grid" role="list" aria-label="Flash Sale Products"></div>
   </section>
-
-  <!-- ===== RECENTLY VIEWED SECTION ===== -->
-  <div class="section-block" id="recentlyViewedBox" style="display:none;">
-    <div class="section-header">
-      <div class="section-title recently-title">
-        <span>👀️</span> Recently Viewed
-      </div>
-    </div>
-    <div id="recentlyViewedContainer" class="flash-sale-grid"></div>
-  </div>
 
   <!-- ===== PRODUCTS SKELETON ===== -->
   <div id="skeletonContainer" class="skeleton-container">
@@ -310,18 +348,54 @@
 
   <!-- ===== PRODUCT GRID ===== -->
   <div class="products-section-header" id="allProductsHeader" style="display:none;">
-    <div class="section-title"><span>🛍️</span> All Products</div>
+    <div class="section-title">
+      <span class="bag-anim">🛍️</span>
+      <span><span class="all-word">All</span> Products</span>
+    </div>
   </div>
+  <!-- First 6 cards -->
   <main id="itemContainer" class="container" role="main" aria-label="All Products" style="display:none;"></main>
+
+  <!-- ===== RECENTLY VIEWED SECTION (after 6 cards) ===== -->
+  <div class="rv-block" id="recentlyViewedBox" style="display:none;">
+    <span class="rv-star rv-star-1">✨</span>
+    <span class="rv-star rv-star-2">⭐</span>
+    <span class="rv-star rv-star-3">💫</span>
+    <div class="rv-header">
+      <div class="rv-title-wrap">
+        <span class="rv-eye">👀</span>
+        <span class="rv-title-text">Recently Viewed</span>
+        <span class="rv-badge" id="rvBadge"></span>
+      </div>
+      <button class="rv-clear-btn" id="rvClearBtn"><i class="fas fa-trash-alt"></i></button>
+    </div>
+    <div id="recentlyViewedContainer" class="rv-grid"></div>
+  </div>
+
+  <!-- Remaining cards (below recently viewed) -->
+  <main id="itemContainerRest" class="container" aria-label="More Products" style="display:none;"></main>
 
   <!-- ===== HIDDEN SEO TEXT ===== -->
   <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
     <p>Delightpk is Pakistan's trusted online shopping store. Buy fashion, electronics, home essentials, smart watches, earbuds, power banks, tripod stands, wall clocks and more. We offer fast delivery across all cities of Pakistan including Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar and more. Cash on delivery available. Best prices guaranteed.</p>
   </div>
 
+  <!-- ===== WHATSAPP FLOATING BUTTON ===== -->
+  <a href="https://wa.me/923262909451?text=Hi%20Delightpk!%20I%20found%20you%20on%20your%20store%20%F0%9F%9B%8D%EF%B8%8F%20I%20want%20to%20know%20more%20about%20your%20products."
+     class="wa-btn" id="waBtn" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <div class="wa-icon">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 2C8.28 2 2 8.28 2 16.004c0 2.478.664 4.8 1.82 6.812L2 30l7.394-1.788A13.93 13.93 0 0 0 16.004 30C23.72 30 30 23.72 30 16.004 30 8.28 23.72 2 16.004 2zm0 25.5a11.44 11.44 0 0 1-5.822-1.593l-.416-.248-4.39 1.062 1.094-4.27-.272-.438A11.452 11.452 0 0 1 4.5 16.004C4.5 9.657 9.657 4.5 16.004 4.5S27.5 9.657 27.5 16.004 22.35 27.5 16.004 27.5zm6.294-8.566c-.344-.172-2.036-1.005-2.352-1.12-.316-.115-.546-.172-.776.172-.23.344-.89 1.12-1.09 1.35-.2.23-.4.258-.744.086-.344-.172-1.452-.535-2.766-1.707-1.022-.912-1.712-2.037-1.912-2.38-.2-.344-.021-.53.15-.7.155-.154.344-.4.516-.6.172-.2.23-.344.344-.574.115-.23.058-.43-.029-.6-.086-.172-.776-1.87-1.064-2.56-.28-.672-.563-.58-.776-.59-.2-.01-.43-.012-.66-.012s-.6.086-.916.43c-.316.344-1.204 1.177-1.204 2.87 0 1.694 1.232 3.33 1.404 3.56.172.23 2.428 3.71 5.88 5.205.822.355 1.464.567 1.964.726.824.264 1.574.226 2.167.137.66-.1 2.036-.832 2.323-1.636.287-.804.287-1.493.2-1.637-.085-.143-.315-.23-.658-.4z" fill="white"/></svg>
+    </div>
+    <span class="wa-tip">Chat with us!</span>
+    <span class="wa-ring"></span>
+    <span class="wa-ring wa-ring-2"></span>
+  </a>
+
   <!-- ===== SCRIPTS ===== -->
   <script src="index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  
 
   <!-- ===== PWA: Service Worker + Install Banner ===== -->
   <script>
