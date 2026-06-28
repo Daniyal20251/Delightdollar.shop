@@ -11,10 +11,43 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
   <title>Privacy Policy - Delight.pk</title>
+
+  <!-- ===== FACEBOOK PIXEL ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- ===== END FACEBOOK PIXEL ===== -->
+
+  <!-- ===== WHATSAPP CLICK TRACKING ===== -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // WhatsApp links par click tracking
+    document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if(typeof fbq !== 'undefined') {
+          fbq('track', 'Contact', {contact_method: 'WhatsApp'});
+        }
+      });
+    });
+  });
+  </script>
+  <!-- ===== END WHATSAPP TRACKING ===== -->
 </head>
   <style>
     body { font-family: sans-serif; padding: 20px; background: #f9f9f9; margin-top:50px; }
-    h1 { color: #ff6c00; }
+    h3 { color: #ff6c00; }
 header {
   position: fixed;
   top: 0;
@@ -68,9 +101,70 @@ header h4 {
   <h4>Privacy Policy</h4>
 </header>
 <body>
-  <h1>Privacy Policy</h1>
-  <p>At Delight.pk powered by Woo-Commerce Web, we value your privacy. Your personal data will never be shared with third parties without your consent. We only collect necessary information for order processing and customer support.</p>
-  <p>For any queries regarding this policy, please contact our support team.</p>
+  <h3>Privacy Policy</h3>
+
+<p>At <strong>Delightpk</strong>, we understand that our users care about their personal data and how it is collected, used, shared, protected, and cared for. We are committed to handling your personal data in accordance with applicable laws when you use any of the features and functions available on our Platform or Services.</p>
+
+<p><strong>PLEASE READ THIS PRIVACY POLICY CAREFULLY.</strong> By signing up, logging in, or using our Services, you acknowledge that you have read and understood the terms of this Privacy Policy and consent to the collection, use, disclosure, storage, transfer, and/or processing of your personal data as described herein.</p>
+
+<h3>1. The Personal Data We Collect</h3>
+
+<p>We collect the following personal data in accordance with applicable laws:</p>
+
+<p><strong>Identity and Profile Data:</strong> Your name, date of birth, gender, username, password, email address, telephone number, profile picture, and any personal data in photographs or videos you upload.</p>
+
+<p><strong>Account and Transaction Data:</strong> Credit card details, bank account details, bank statements, delivery and billing address, payment and order history, and details of products and services purchased through the Platform.</p>
+
+<p><strong>Technical Data (Collected Automatically):</strong> IP address, browser type and version, device type, unique device identification numbers, date and time of access, operating system, platform, browsing patterns, pages viewed, how you interact with our Platform, cookies and similar tracking technologies.</p>
+
+<p><strong>Usage Data:</strong> Information on how you use the Platform, products, and Services, time spent on the Platform, items searched for, access times/dates, and chat, email, or call history with our customer service team.</p>
+
+<p><strong>Location Data:</strong> Geographic location (country or city-level) when you access the Platform.</p>
+
+<p><strong>Marketing and Communications Data:</strong> Your preferences in receiving marketing from us and third parties, and your communication preferences.</p>
+
+<h3>2. How We Collect Your Personal Data</h3>
+
+<p>We collect personal data when you register for an account or log in to the Platform, place an order or make a transaction, use the chat function to communicate with sellers, subscribe to newsletters or marketing materials, participate in promotions, surveys, or competitions, interact with us via customer service channels, or log in through external services such as Facebook or Google.</p>
+
+<h3>3. How We Use Your Personal Data</h3>
+
+<p>We use your personal data for order processing (to process and deliver your orders, manage payments, and provide customer support), account management (to manage your account and verify your identity), platform improvement (to analyze and evaluate data to improve our website, services, and products), personalization (to personalize content and provide more relevant advertising and recommendations), marketing (to send promotional materials, newsletters, and updates — you may unsubscribe at any time), security (to detect and prevent fraud, abuse, or illegal activities), and legal compliance (to comply with applicable laws and regulations).</p>
+
+<h3>4. Sharing and Disclosure of Personal Data</h3>
+
+<p>We may share your personal data with service providers (payment service providers, logistics and shipping partners, marketing agencies, data analytics providers, and customer service agents who perform functions on our behalf), sellers (when necessary to fulfill your orders, e.g., sharing delivery details with sellers for shipment), affiliates (our related companies for operational and marketing purposes), and legal authorities (when required by law, court order, or government regulation). We do NOT sell your personal data to third parties. We endeavor to ensure that any third parties with whom we share your data keep it secure and use it only for the purposes set out in this Privacy Policy.</p>
+
+<h3>5. Data Security</h3>
+
+<p>We use physical, managerial, and technical safeguards designed to improve the integrity and security of your personal data. However, no security measures are perfect or impenetrable. We cannot guarantee that your information will not be accessed, disclosed, altered, or destroyed by breach of any of our safeguards.</p>
+
+<h3>6. Cookies and Similar Technologies</h3>
+
+<p>We and our authorized service providers may use cookies, web beacons, and other similar technologies to recognize your device or browser, collect technical and usage data for analysis, and personalize your experience and provide relevant advertising. Where required by applicable law, we will seek your prior consent before using cookies and similar tracking technologies.</p>
+
+<h3>7. Your Rights</h3>
+
+<p>You have the right to access (request access to the personal data we hold about you), correction (request correction of any inaccurate or incomplete data), deletion (request deletion of your personal data, subject to legal and operational requirements), withdraw consent (withdraw your consent to our use of your personal data for marketing purposes), and opt-out (unsubscribe from marketing communications at any time). To exercise these rights, please contact our customer support team.</p>
+
+<h3>8. Data Retention</h3>
+
+<p>We will only keep your personal data for as long as necessary to fulfill the purposes for which it was collected, or as required by law. Once it is no longer needed, we will securely delete or anonymize your data.</p>
+
+<h3>9. Children's Privacy</h3>
+
+<p>Our Platform is not directed to children under the age of 13. We do not knowingly collect personal data from children under 13 without obtaining parental consent.</p>
+
+<h3>10. Changes to This Privacy Policy</h3>
+
+<p>We may update this Privacy Policy from time to time in response to changing legal, technical, or business developments. When we make significant changes, we will post the updated policy on our Platform and notify you as required by applicable law. Your continued use of the Services following any updates constitutes your acceptance of the revised Privacy Policy.</p>
+
+<h3>11. Contact Us</h3>
+
+<p>If you have any questions, concerns, or complaints regarding this Privacy Policy or how we handle your personal data, please contact our customer support team.</p>
+
+<p><em>Last Updated: June 2026</em></p>
+
   
   <script>
 if ('serviceWorker' in navigator) {

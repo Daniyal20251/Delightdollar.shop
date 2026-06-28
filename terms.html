@@ -11,10 +11,43 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
   <title>Terms & Conditions - Delight.pk</title>
+
+  <!-- ===== FACEBOOK PIXEL ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- ===== END FACEBOOK PIXEL ===== -->
+
+  <!-- ===== WHATSAPP CLICK TRACKING ===== -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // WhatsApp links par click tracking
+    document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if(typeof fbq !== 'undefined') {
+          fbq('track', 'Contact', {contact_method: 'WhatsApp'});
+        }
+      });
+    });
+  });
+  </script>
+  <!-- ===== END WHATSAPP TRACKING ===== -->
 </head>
   <style>
     body { font-family: sans-serif; padding: 20px; background: #f9f9f9; margin-top:50px;}
-    h1 { color: #ff6c00; }
+    h3 { color: #ff6c00; }
 header {
   position: fixed;
   top: 0;
@@ -66,10 +99,82 @@ header h4 {
   <div class="back-btn" onclick="history.back()">
     <img src="Delight icons/Back.png" alt="Back">
   </div>
-  <h4>Terms & Conditions</h4>
+    <h4>Terms & Conditions</h4>
 </header>
-  <h1>Terms & Conditions</h1>
-  <p>By using Delight.pk powered by Woo-Commerce Web, you agree to our terms. All products are sold as per availability. Prices may change without prior notice. Orders are processed only after payment confirmation.</p>
+  <h3>Terms & Conditions</h3>
+
+<p>Welcome to <strong>Delightpk</strong>. These Terms & Conditions govern your use of our website, mobile application, and services (collectively referred to as the "Platform"). By accessing, browsing, registering, or using our Platform, you agree to be bound by these Terms & Conditions. If you do not agree to these terms, please do not use our Platform. We reserve the right to modify, update, or change these Terms & Conditions at any time without prior notice. Your continued use of the Platform following any changes constitutes your acceptance of the revised terms.</p>
+
+<h3>1. Definitions</h3>
+
+<p>"Platform" refers to the Delightpk website, mobile application, and any related services. "We," "Us," or "Our" refers to Delightpk. "You," "Your," or "User" refers to any person who accesses, browses, or uses the Platform. "Seller" refers to third-party vendors or individuals who list products on the Platform. "Product" refers to any item listed for sale on the Platform. "Order" refers to a purchase request placed by a User through the Platform.</p>
+
+<h3>2. Eligibility and Account Registration</h3>
+
+<p>To use our Platform, you must be at least 18 years of age or the legal age of majority in your jurisdiction. By registering an account, you represent and warrant that you have the legal capacity to enter into binding contracts. You agree to provide accurate, complete, and current information during registration and to keep your account information updated. You are solely responsible for maintaining the confidentiality of your account credentials, including your username and password, and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account or any other breach of security. We shall not be liable for any loss or damage arising from your failure to comply with these obligations.</p>
+
+<h3>3. Product Listings and Pricing</h3>
+
+<p>All products listed on the Platform are subject to availability. We and our Sellers make every effort to display product descriptions, images, specifications, and prices as accurately as possible. However, we do not guarantee that all product information is error-free, complete, or current. Prices may change without prior notice. In the event of a pricing error, we reserve the right to cancel any orders placed at the incorrect price and refund any payments made. Product colors and appearances may vary slightly from the images displayed due to screen settings and photography conditions. We reserve the right to limit quantities, discontinue products, or refuse service to anyone at our sole discretion.</p>
+
+<h3>4. Orders and Payment</h3>
+
+<p>By placing an order on the Platform, you are making an offer to purchase the product at the listed price. All orders are subject to acceptance and confirmation by us or the Seller. We reserve the right to refuse or cancel any order for reasons including but not limited to product unavailability, errors in product or pricing information, or suspected fraudulent activity. We offer multiple payment methods including Cash on Delivery (COD), credit/debit cards, bank transfers, and digital wallets. For advance payment methods, orders are processed only after payment confirmation. You agree to provide valid and accurate payment information and authorize us to charge the applicable amount for your order.</p>
+
+<h3>5. Shipping and Delivery</h3>
+
+<p>Delivery times are estimates and may vary depending on your location, product availability, and courier service performance. We are not responsible for delays caused by circumstances beyond our control, including but not limited to natural disasters, strikes, customs delays, or courier service disruptions. Risk of loss and title for products pass to you upon delivery to the carrier for shipment. You are responsible for providing accurate and complete delivery address information. We are not liable for failed deliveries due to incorrect addresses or unavailability of the recipient at the time of delivery.</p>
+
+<h3>6. Returns, Refunds, and Cancellations</h3>
+
+<p>Our return and refund policy allows you to return eligible products within the specified return period, provided the product is unused, in original packaging, and accompanied by proof of purchase. Certain products such as intimate wear, cosmetics, perishable goods, and personalized items may not be eligible for return due to hygiene or customization reasons. Refunds will be processed to the original payment method within a reasonable timeframe after the returned product is received and inspected. For Cash on Delivery orders, refunds will be issued via bank transfer or store credit. You may cancel an order before it is shipped by contacting our customer support team. Once an order has been shipped, cancellation requests will be treated as return requests subject to our return policy.</p>
+
+<h3>7. User Conduct and Prohibited Activities</h3>
+
+<p>You agree to use the Platform only for lawful purposes and in a manner consistent with these Terms & Conditions. You are prohibited from engaging in any activity that may harm, disrupt, or interfere with the Platform or its users. Prohibited activities include but are not limited to: using the Platform for fraudulent or illegal purposes, impersonating any person or entity, uploading or transmitting viruses or malicious code, attempting to gain unauthorized access to the Platform or its systems, scraping or data mining the Platform without permission, posting false, misleading, or defamatory content, harassing or threatening other users or Sellers, and violating any applicable laws or regulations. We reserve the right to suspend or terminate your account and take legal action if you engage in any prohibited activities.</p>
+
+<h3>8. Intellectual Property Rights</h3>
+
+<p>All content on the Platform, including but not limited to text, graphics, logos, images, videos, software, and trademarks, is the property of Delightpk or its licensors and is protected by intellectual property laws. You are granted a limited, non-exclusive, non-transferable license to access and use the Platform for personal, non-commercial purposes. You may not reproduce, distribute, modify, create derivative works from, publicly display, or exploit any content from the Platform without our prior written consent. You retain ownership of any content you submit to the Platform, such as reviews, comments, or feedback. By submitting content, you grant us a worldwide, royalty-free, perpetual license to use, reproduce, modify, and display such content for promotional and operational purposes.</p>
+
+<h3>9. Third-Party Links and Services</h3>
+
+<p>The Platform may contain links to third-party websites, services, or content that are not owned or controlled by us. We are not responsible for the content, privacy practices, or terms of use of any third-party websites or services. Your use of third-party services is at your own risk and subject to their respective terms and conditions. We do not endorse or assume any responsibility for any third-party products, services, or content.</p>
+
+<h3>10. Disclaimer of Warranties</h3>
+
+<p>The Platform and all products and services provided through it are offered on an "as is" and "as available" basis without any warranties of any kind, either express or implied. We do not warrant that the Platform will be uninterrupted, error-free, secure, or free from viruses or other harmful components. We disclaim all warranties, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement. Any reliance you place on information or content available on the Platform is strictly at your own risk.</p>
+
+<h3>11. Limitation of Liability</h3>
+
+<p>To the fullest extent permitted by applicable law, Delightpk, its affiliates, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, goodwill, or other intangible losses, arising out of or in connection with your use of the Platform or any products purchased through it. Our total liability to you for any claim arising from these Terms & Conditions or your use of the Platform shall not exceed the amount you paid for the specific product or service giving rise to the claim.</p>
+
+<h3>12. Indemnification</h3>
+
+<p>You agree to indemnify, defend, and hold harmless Delightpk, its affiliates, directors, employees, and agents from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising out of or in connection with your use of the Platform, your violation of these Terms & Conditions, or your infringement of any third-party rights.</p>
+
+<h3>13. Governing Law and Dispute Resolution</h3>
+
+<p>These Terms & Conditions shall be governed by and construed in accordance with the laws of the Islamic Republic of Pakistan. Any dispute arising out of or in connection with these Terms & Conditions shall first be attempted to be resolved through good faith negotiations. If the dispute cannot be resolved amicably, it shall be submitted to binding arbitration or the competent courts of Pakistan, as determined by us at our discretion.</p>
+
+<h3>14. Termination</h3>
+
+<p>We reserve the right to suspend or terminate your account and access to the Platform at any time, with or without cause, and with or without notice. Upon termination, your right to use the Platform will immediately cease. All provisions of these Terms & Conditions that by their nature should survive termination shall survive, including but not limited to intellectual property rights, disclaimer of warranties, limitation of liability, and indemnification.</p>
+
+<h3>15. Severability</h3>
+
+<p>If any provision of these Terms & Conditions is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such provision shall be modified to the minimum extent necessary to make it valid and enforceable, or if modification is not possible, it shall be severed from these Terms & Conditions. The remaining provisions shall continue in full force and effect.</p>
+
+<h3>16. Entire Agreement</h3>
+
+<p>These Terms & Conditions, together with our Privacy Policy and any other policies referenced herein, constitute the entire agreement between you and Delightpk regarding your use of the Platform and supersede all prior agreements, understandings, and communications, whether written or oral.</p>
+
+<h3>17. Contact Us</h3>
+
+<p>If you have any questions, concerns, or feedback regarding these Terms & Conditions, please contact our customer support team. We are committed to addressing your inquiries in a timely and professional manner.</p>
+
+<p><em>Last Updated: June 2026</em></p>
+
   
 <script>
 if ('serviceWorker' in navigator) {

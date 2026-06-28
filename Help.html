@@ -11,6 +11,39 @@
 <meta name="apple-mobile-web-app-title" content="DelightPK">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
+
+  <!-- ===== FACEBOOK PIXEL ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- ===== END FACEBOOK PIXEL ===== -->
+
+  <!-- ===== WHATSAPP CLICK TRACKING ===== -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // WhatsApp links par click tracking
+    document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if(typeof fbq !== 'undefined') {
+          fbq('track', 'Contact', {contact_method: 'WhatsApp'});
+        }
+      });
+    });
+  });
+  </script>
+  <!-- ===== END WHATSAPP TRACKING ===== -->
 </head>
   <style>
     body {
@@ -144,7 +177,7 @@ header h4 {
 
   <div class="faq">
     <h3>3. How does payment work?</h3>
-    <p>We offer Cash on Delivery (COD). Pay only when you receive your product.</p>
+    <p>We offer both Cash on Delivery (COD) and Advance Payment options. Pay only when you receive your product with COD, or pay securely online in advance.</p>
   </div>
 
   <div class="faq">
